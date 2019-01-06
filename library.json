@@ -1,0 +1,20 @@
+{
+    "name": "Debug",
+    "keywords": "assert, log, utility",
+    "description": "Serial based assertion and log library for Arduino",
+    "repository":
+    {
+        "type": "git",
+        "url": "https://github.com/hideakitai/Debug.git"
+    },
+    "authors":
+    {
+        "name": "Hideaki Tai",
+        "url": "https://github.com/hideakitai",
+        "maintainer": true
+    },
+    "version": "0.1.0",
+    "license": "MIT",
+    "frameworks": "*",
+    "platforms": "*"
+}
