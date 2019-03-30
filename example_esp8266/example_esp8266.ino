@@ -1,7 +1,7 @@
 // uncommend NDEBUG disables ASSERT and all debug serial (Release Mode)
 //#define NDEBUG
 
-#include <Debug.h>
+#include <DebugESP8266.h>
 
 void setup()
 {
