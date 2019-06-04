@@ -7,10 +7,10 @@
 
 #if defined(TEENSYDUINO) || defined(__AVR__) || defined(__MBED__) || defined (ESP_PLATFORM) || defined (ESP8266)
 
-namespace ard {
-namespace Debug {
+namespace arduino {
+namespace debug {
 
-    void Assert(bool b, const char* file, int line, const char* func, const char* expr)
+    void assert(bool b, const char* file, int line, const char* func, const char* expr)
     {
         while (!b)
         {
@@ -29,7 +29,7 @@ namespace Debug {
     enum class LogLevel {NONE, ERROR, WARNING, VERBOSE};
     LogLevel log_level = LogLevel::VERBOSE;
 
-    void Log(LogLevel level, const char* file, int line, const char* func, const char* expr)
+    void log(LogLevel level, const char* file, int line, const char* func, const char* expr)
     {
         if ((log_level == LogLevel::NONE) || (level == LogLevel::NONE)) return;
         if ((int)level <= (int)log_level)
@@ -49,6 +49,17 @@ namespace Debug {
 #endif
         }
     }
+
+    void print() { Serial.println(); }
+
+    template<typename Head, typename... Tail>
+    void print(Head&& head, Tail&&... tail)
+    {
+        Serial.print(head);
+        Serial.print(" ");
+        print(std::forward<Tail>(tail)...);
+    }
+
 } // namespace Debug
 } // namespace ard
 
@@ -58,18 +69,20 @@ namespace Debug {
 #define LOG_ERROR(s,...) ((void)0)
 #define LOG_WARNING(s,...) ((void)0)
 #define LOG_VERBOSE(s,...) ((void)0)
+#define PRINT(s,...) ((void)0)
 
 #else // NDEBUG
 
-#define ASSERT(b) ard::Debug::Assert((b), __FILE__, __LINE__, __func__, #b)
-#define LOG_ERROR(s,...) ard::Debug::Log(ard::Debug::LogLevel::ERROR, __FILE__, __LINE__, __func__, s)
-#define LOG_WARNING(s,...) ard::Debug::Log(ard::Debug::LogLevel::WARNING, __FILE__, __LINE__, __func__, s)
-#define LOG_VERBOSE(s,...) ard::Debug::Log(ard::Debug::LogLevel::VERBOSE, __FILE__, __LINE__, __func__, s)
+#define ASSERT(b) arduino::debug::assert((b), __FILE__, __LINE__, __func__, #b)
+#define LOG_ERROR(s,...) arduino::debug::log(arduino::debug::LogLevel::ERROR, __FILE__, __LINE__, __func__, s)
+#define LOG_WARNING(s,...) arduino::debug::log(arduino::debug::LogLevel::WARNING, __FILE__, __LINE__, __func__, s)
+#define LOG_VERBOSE(s,...) arduino::debug::log(arduino::debug::LogLevel::VERBOSE, __FILE__, __LINE__, __func__, s)
+#define PRINT(s,...) arduino::debug::print(s, __VA_ARGS__)
 
 #endif // #ifdef NDEBUG
 
-#define LOG_SET_LEVEL(lvl) ard::Debug::log_level = lvl
-using DebugLogLevel = ard::Debug::LogLevel;
+#define LOG_SET_LEVEL(lvl) arduino::debug::log_level = lvl
+using DebugLogLevel = arduino::debug::LogLevel;
 
 #endif // #if defined(TEENSYDUINO) || defined(__AVR__) || defined(__MBED__) || defined (ESP_PLATFORM) || defined (ESP8266)
 
