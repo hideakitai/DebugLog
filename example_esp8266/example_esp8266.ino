@@ -8,6 +8,8 @@ void setup()
   Serial.begin(115200);
   delay(2000);
 
+  PRINT("this is for debug", 1, 2.2, "you can", "print variable args");
+
   LOG_ERROR("this is error log");
   LOG_WARNING("this is warning log");
   LOG_VERBOSE("this is verbose log");
