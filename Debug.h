@@ -49,6 +49,17 @@ namespace Debug {
 #endif
         }
     }
+
+    void print() { Serial.println(); }
+
+    template<typename Head, typename... Tail>
+    void print(Head&& head, Tail&&... tail)
+    {
+        Serial.print(head);
+        Serial.print(" ");
+        print(std::forward<Tail>(tail)...);
+    }
+
 } // namespace Debug
 } // namespace ard
 
@@ -58,6 +69,7 @@ namespace Debug {
 #define LOG_ERROR(s,...) ((void)0)
 #define LOG_WARNING(s,...) ((void)0)
 #define LOG_VERBOSE(s,...) ((void)0)
+#define PRINT(s,...) ((void)0)
 
 #else // NDEBUG
 
@@ -65,6 +77,7 @@ namespace Debug {
 #define LOG_ERROR(s,...) ard::Debug::Log(ard::Debug::LogLevel::ERROR, __FILE__, __LINE__, __func__, s)
 #define LOG_WARNING(s,...) ard::Debug::Log(ard::Debug::LogLevel::WARNING, __FILE__, __LINE__, __func__, s)
 #define LOG_VERBOSE(s,...) ard::Debug::Log(ard::Debug::LogLevel::VERBOSE, __FILE__, __LINE__, __func__, s)
+#define PRINT(s,...) ard::Debug::print(s, __VA_ARGS__)
 
 #endif // #ifdef NDEBUG
 
