@@ -11,6 +11,8 @@ Serial based assertion and log library for Arduino
 
 void setup()
 {
+    PRINT("this is for debug", 1, 2.2, "you can", "print variable args");
+
     LOG_SET_LEVEL(Debug::LogLevel::ERROR); // only ERROR log is printed
     LOG_SET_LEVEL(Debug::LogLevel::WARNING); // ERROR and WARNING is printed
     LOG_SET_LEVEL(Debug::LogLevel::VERBOSE); // all log is printed
