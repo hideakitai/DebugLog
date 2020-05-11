@@ -1,4 +1,4 @@
-# Debug
+# DebugLog
 
 Serial based assertion and log library for Arduino
 
@@ -10,7 +10,7 @@ These macros can be used in standard C++ apps.
 // uncommend NDEBUG disables ASSERT and all debug serial (Release Mode)
 //#define NDEBUG
 
-#include <Debug.h>
+#include <DebugLog.h>
 
 void setup()
 {
