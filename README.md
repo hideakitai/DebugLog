@@ -1,7 +1,10 @@
 # Debug
+
 Serial based assertion and log library for Arduino
 
 ## Usage
+
+These macros can be used in standard C++ apps.
 
 ```C++
 // uncommend NDEBUG disables ASSERT and all debug serial (Release Mode)
@@ -11,7 +14,13 @@ Serial based assertion and log library for Arduino
 
 void setup()
 {
-    PRINT("this is for debug", 1, 2.2, "you can", "print variable args");
+    Serial.begin(115200);
+
+    // you can change target stream (default: Serial, only for Arduino)
+    // DEBUG_LOG_ATTACH_STREAM(Serial2);
+
+    PRINT("this is for debug");
+    PRINTLN(1, 2.2, "you can", "print variable args")
 
     LOG_SET_LEVEL(Debug::LogLevel::ERROR); // only ERROR log is printed
     LOG_SET_LEVEL(Debug::LogLevel::WARNING); // ERROR and WARNING is printed
