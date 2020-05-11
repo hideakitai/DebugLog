@@ -2,7 +2,7 @@
 
 #include "../../DebugLog.h"
 
-int main(int argc, char *argv[]) 
+int main()
 {
 	PRINT("this is for debug");
 	PRINTLN(1, 2.2, "you can", "print variable args");
