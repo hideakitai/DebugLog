@@ -7,6 +7,7 @@
     #include <stdarg.h>
 #else
     #include <iostream>
+    #include <string>
 #endif
 
 
@@ -22,13 +23,28 @@ namespace debug {
         template <class T> constexpr T&& forward(typename remove_reference<T>::type&& t) noexcept { return static_cast<T&&>(t); }
     }
 
-    inline void print() { Serial.print(" "); }
+#ifdef ARDUINO
+    Stream* stream {&Serial};
+    inline void attach(Stream& s) { stream = &s; }
+    using string_t = String;
+#else
+    using string_t = std::string;
+#endif
+
+    inline void print()
+    {
+#ifdef ARDUINO
+        stream->print(" ");
+#else
+        std::cout << " ";
+#endif
+    }
 
     template<typename Head>
     inline void print(Head&& head)
     {
 #ifdef ARDUINO
-        Serial.print(head);
+        stream->print(head);
 #else
         std::cout << head;
 #endif
@@ -39,8 +55,8 @@ namespace debug {
     inline void print(Head&& head, Tail&&... tail)
     {
 #ifdef ARDUINO
-        Serial.print(head);
-        Serial.print(" ");
+        stream->print(head);
+        stream->print(" ");
         print(detail::forward<Tail>(tail)...);
 #else
         std::cout << head << " ";
@@ -51,7 +67,7 @@ namespace debug {
     inline void println()
     {
 #ifdef ARDUINO
-        Serial.println();
+        stream->println();
 #else
         std::cout << std::endl;
 #endif
@@ -61,7 +77,7 @@ namespace debug {
     inline void println(Head&& head)
     {
 #ifdef ARDUINO
-        Serial.print(head);
+        stream->print(head);
 #else
         std::cout << head;
 #endif
@@ -72,8 +88,8 @@ namespace debug {
     inline void println(Head&& head, Tail&&... tail)
     {
 #ifdef ARDUINO
-        Serial.print(head);
-        Serial.print(" ");
+        stream->print(head);
+        stream->print(" ");
         println(detail::forward<Tail>(tail)...);
 #else
         std::cout << head << " ";
@@ -100,7 +116,7 @@ namespace debug {
         if ((log_level == LogLevel::NONE) || (level == LogLevel::NONE)) return;
         if ((int)level <= (int)log_level)
         {
-            String lvl_str;
+            string_t lvl_str;
             if      (level == LogLevel::ERROR)   lvl_str = "ERROR";
             else if (level == LogLevel::WARNING) lvl_str = "WARNING";
             else if (level == LogLevel::VERBOSE) lvl_str = "VERBOSE";
@@ -119,6 +135,9 @@ namespace debug {
 #define LOG_WARNING(s,...) ((void)0)
 #define LOG_VERBOSE(s,...) ((void)0)
 #define ASSERT(b) ((void)0)
+#ifdef ARDUINO
+    #define DEBUG_LOG_ATTACH_STREAM(s) ((void)0)
+#endif
 
 #else // NDEBUG
 
@@ -129,8 +148,10 @@ namespace debug {
 #define LOG_WARNING(s,...) arx::debug::log(arx::debug::LogLevel::WARNING, __FILENAME__, __LINE__, __func__, s)
 #define LOG_VERBOSE(s,...) arx::debug::log(arx::debug::LogLevel::VERBOSE, __FILENAME__, __LINE__, __func__, s)
 #ifdef ARDUINO
+    #define DEBUG_LOG_ATTACH_STREAM(s) arx::debug::attach(s)
     #define ASSERT(b) arx::debug::assert((b), __FILENAME__, __LINE__, __func__, #b)
 #else
+    #define DEBUG_LOG_ATTACH_STREAM(s) ((void)0)
     #include <cassert>
     #define ASSERT(b) assert(b)
 #endif
