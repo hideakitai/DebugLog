@@ -8,6 +8,9 @@ void setup()
   Serial.begin(115200);
   delay(2000);
 
+  // you can change target stream (default: Serial)
+  // DEBUG_LOG_ATTACH_STREAM(Serial2);
+
   PRINT("this is for debug");
   PRINTLN(1, 2.2, "you can", "print variable args");
 
