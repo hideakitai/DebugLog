@@ -11,15 +11,15 @@ int main()
 	LOG_WARNING("this is warning log");
 	LOG_VERBOSE("this is verbose log");
 
-	LOG_SET_LEVEL(DebugLogLevel::WARNING);
-	PRINTLN("change log level to WARNING");
+	LOG_SET_LEVEL(DebugLogLevel::WARNINGS);
+	PRINTLN("change log level to WARNINGS");
 
 	LOG_ERROR("this is error log");
 	LOG_WARNING("this is warning log");
 	LOG_VERBOSE("this is verbose log");
 
-	LOG_SET_LEVEL(DebugLogLevel::ERROR);
-	PRINTLN("change log level to ERROR");
+	LOG_SET_LEVEL(DebugLogLevel::ERRORS);
+	PRINTLN("change log level to ERRORS");
 
 	LOG_ERROR("this is error log");
 	LOG_WARNING("this is warning log");
