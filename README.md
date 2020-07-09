@@ -2,6 +2,13 @@
 
 Serial based assertion and log library for Arduino
 
+## Feature
+
+- print variadic arguments in one line
+- log level control
+- automatically save to SD card
+
+
 ## Usage
 
 These macros can be used in standard C++ apps.
