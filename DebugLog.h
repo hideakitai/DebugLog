@@ -138,6 +138,7 @@ namespace debug {
 
 
 #define LOG_SET_LEVEL(lvl) arx::debug::log_level = lvl
+#define LOG_GET_LEVEL() arx::debug::log_level
 using DebugLogLevel = arx::debug::LogLevel;
 
 
