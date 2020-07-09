@@ -50,6 +50,12 @@ enum class LogLevel {
 };
 ```
 
+## Used Inside of
+
+- [MsgPack](https://github.com/hideakitai/MsgPack)
+- [ES920](https://github.com/hideakitai/ES920)
+
+
 ## License
 
 MIT
