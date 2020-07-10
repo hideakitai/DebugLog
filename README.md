@@ -91,7 +91,7 @@ void setup()
   // if 3rd arg is false, you should manually save logs
   // however this is much faster than auto save (saving takes few milliseconds)
   DebugLog::flush(); // manually save to SD card and continue logging
-  DebugLog::close(); // flush() and finish logging (ASSERT won't be saved to SD)
+  // DebugLog::close(); // flush() and finish logging (ASSERT won't be saved to SD)
 }
 ```
 
