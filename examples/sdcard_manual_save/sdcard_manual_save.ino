@@ -34,7 +34,7 @@ void setup()
 
     // 3rd arg: true: auto save every logging, false: manually save
     // 4th arg: true: only log to SD, false: also print via Serial
-    DebugLog::attach(SD, filename, true, true);
+    DebugLog::attach(SD, filename, false, true);
   }
   else
     PRINTLN("sd initialization failed!");
@@ -71,8 +71,13 @@ void setup()
   LOG_WARNING("this is warning log");
   LOG_VERBOSE("this is verbose log");
 
+  DebugLog::flush(); // save to SD card and continue logging
+//   DebugLog::close(); // flush() and finish logging (ASSERT won't be saved to SD)
+
   delay(5000);
 
+  // assertions are automatically saved if DebugLog is not closed
+  // if DebugLog is closed, assertions won't be saved to SD
   int x = 1;
   ASSERT(x != 1); // if assertion failed, Serial endlessly prints message
 }

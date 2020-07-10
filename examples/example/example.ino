@@ -9,35 +9,35 @@ void setup()
   delay(2000);
 
   // you can change target stream (default: Serial)
-  // DEBUG_LOG_ATTACH_STREAM(Serial2);
+  // DebugLog::attach(Serial2);
 
   PRINT("this is for debug");
   PRINTLN(1, 2.2, "you can", "print variable args");
-  PRINTLN("current log level is", (int)LOG_GET_LEVEL()); // 0: NONE, 1: ERRORS, 2: WARNINGS, 3: VERBOSE
+  PRINTLN("current log level is", (int)DebugLog::logLevel()); // 0: NONE, 1: ERRORS, 2: WARNINGS, 3: VERBOSE
 
   LOG_ERROR("this is error log");
   LOG_WARNING("this is warning log");
   LOG_VERBOSE("this is verbose log");
 
-  LOG_SET_LEVEL(DebugLogLevel::WARNINGS);
+  DebugLog::logLevel(DebugLogLevel::WARNINGS);
   PRINTLN("change log level to WARNINGS");
-  PRINTLN("current log level is", (int)LOG_GET_LEVEL());
+  PRINTLN("current log level is", (int)DebugLog::logLevel());
 
   LOG_ERROR("this is error log");
   LOG_WARNING("this is warning log");
   LOG_VERBOSE("this is verbose log");
 
-  LOG_SET_LEVEL(DebugLogLevel::ERRORS);
+  DebugLog::logLevel(DebugLogLevel::ERRORS);
   PRINTLN("change log level to ERRORS");
-  PRINTLN("current log level is", (int)LOG_GET_LEVEL());
+  PRINTLN("current log level is", (int)DebugLog::logLevel());
 
   LOG_ERROR("this is error log");
   LOG_WARNING("this is warning log");
   LOG_VERBOSE("this is verbose log");
 
-  LOG_SET_LEVEL(DebugLogLevel::NONE);
+  DebugLog::logLevel(DebugLogLevel::NONE);
   PRINTLN("change log level to NONE");
-  PRINTLN("current log level is", (int)LOG_GET_LEVEL());
+  PRINTLN("current log level is", (int)DebugLog::logLevel());
 
   LOG_ERROR("this is error log");
   LOG_WARNING("this is warning log");
