@@ -92,6 +92,7 @@ namespace debug {
     {
         close();
         logger = new SdLogger<SdType, File>(s, path);
+        b_auto_save = auto_save;
         b_only_sd = only_sd;
     }
 #endif
