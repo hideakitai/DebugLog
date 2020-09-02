@@ -34,38 +34,38 @@ void setup()
 
     // 3rd arg: true: auto save every logging, false: manually save
     // 4th arg: true: only log to SD, false: also print via Serial
-    DebugLog::attach(SD, filename, true, true);
+    LOG_ATTACH_SD(SD, filename, true, true);
   }
   else
     PRINTLN("sd initialization failed!");
 
   PRINT("this is for debug");
   PRINTLN(1, 2.2, "you can", "print variable args");
-  PRINTLN("current log level is", (int)DebugLog::logLevel()); // 0: NONE, 1: ERRORS, 2: WARNINGS, 3: VERBOSE
+  PRINTLN("current log level is", (int)LOG_GET_LEVEL()); // 0: NONE, 1: ERRORS, 2: WARNINGS, 3: VERBOSE
 
   LOG_ERROR("this is error log");
   LOG_WARNING("this is warning log");
   LOG_VERBOSE("this is verbose log");
 
-  DebugLog::logLevel(DebugLogLevel::WARNINGS);
+  LOG_SET_LEVEL(DebugLogLevel::WARNINGS);
   PRINTLN("change log level to WARNINGS");
-  PRINTLN("current log level is", (int)DebugLog::logLevel());
+  PRINTLN("current log level is", (int)LOG_GET_LEVEL());
 
   LOG_ERROR("this is error log");
   LOG_WARNING("this is warning log");
   LOG_VERBOSE("this is verbose log");
 
-  DebugLog::logLevel(DebugLogLevel::ERRORS);
+  LOG_SET_LEVEL(DebugLogLevel::ERRORS);
   PRINTLN("change log level to ERRORS");
-  PRINTLN("current log level is", (int)DebugLog::logLevel());
+  PRINTLN("current log level is", (int)LOG_GET_LEVEL());
 
   LOG_ERROR("this is error log");
   LOG_WARNING("this is warning log");
   LOG_VERBOSE("this is verbose log");
 
-  DebugLog::logLevel(DebugLogLevel::NONE);
+  LOG_SET_LEVEL(DebugLogLevel::NONE);
   PRINTLN("change log level to NONE");
-  PRINTLN("current log level is", (int)DebugLog::logLevel());
+  PRINTLN("current log level is", (int)LOG_GET_LEVEL());
 
   LOG_ERROR("this is error log");
   LOG_WARNING("this is warning log");
