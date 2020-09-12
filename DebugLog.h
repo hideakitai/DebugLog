@@ -125,6 +125,9 @@ namespace debug {
         Logger* logger {nullptr};
 #endif
         LogLevel log_level = LogLevel::VERBOSE;
+        bool b_file {true};
+        bool b_line {true};
+        bool b_func {true};
         bool b_auto_save {false};
         bool b_only_sd {false};
 
@@ -270,12 +273,24 @@ namespace debug {
                     case LogLevel::VERBOSE:  lvl_str = "VERBOSE"; break;
                     default:                 lvl_str = "";        break;
                 }
+
+                print("[", lvl_str, "]");
+                if (b_file) print(file, ":");
+                if (b_line) print(line, ":");
+                if (b_func) print(func, ":");
 #ifdef ARDUINO
-                println("[", lvl_str, "]", file, ":", line, ":", func, ":", detail::forward<Args>(args)...);
+                println(detail::forward<Args>(args)...);
 #else
-                println("[", lvl_str, "]", file, ":", line, ":", func, ":", std::forward<Args>(args)...);
+                println(std::forward<Args>(args)...);
 #endif
             }
+        }
+
+        void option(const bool en_file, const bool en_line, const bool en_func)
+        {
+            b_file = en_file;
+            b_line = en_line;
+            b_func = en_func;
         }
     };
 
@@ -295,6 +310,7 @@ using DebugLogLevel = arx::debug::LogLevel;
 #define LOG_VERBOSE(...) ((void)0)
 #define LOG_GET_LEVEL() ((void)0)
 #define LOG_SET_LEVEL(l) ((void)0)
+#define LOG_SET_OPTION(...) ((void)0)
 #define LOG_ATTACH_SERIAL() ((void)0)
 #define LOG_ATTACH_SD(l) ((void)0)
 #define LOG_SD_FLUSH() ((void)0)
@@ -311,6 +327,7 @@ using DebugLogLevel = arx::debug::LogLevel;
 #define LOG_VERBOSE(...) DebugLog::Manager::get().log(arx::debug::LogLevel::VERBOSE, __FILENAME__, __LINE__, __func__, __VA_ARGS__)
 #define LOG_GET_LEVEL() DebugLog::Manager::get().logLevel()
 #define LOG_SET_LEVEL(l) DebugLog::Manager::get().logLevel(l)
+#define LOG_SET_OPTION(file, line, func) DebugLog::Manager::get().option(file, line, func)
 #ifdef ARDUINO
     #define LOG_ATTACH_SERIAL(s) DebugLog::Manager::get().attach(s)
     #define LOG_ATTACH_SD(s, p, b, ...) DebugLog::Manager::get().attach(s, p, b, __VA_ARGS__)

@@ -43,6 +43,15 @@ void setup()
   LOG_WARNING("this is warning log");
   LOG_VERBOSE("this is verbose log");
 
+  LOG_SET_LEVEL(DebugLogLevel::VERBOSE);
+  PRINTLN("change log level to VERBOSE");
+  LOG_SET_OPTION(false, false, false); // disable file, line, func
+  PRINTLN("disable file, line, and func from output format");
+
+  LOG_ERROR("this is error log");
+  LOG_WARNING("this is warning log");
+  LOG_VERBOSE("this is verbose log");
+
   delay(5000);
 
   int x = 1;

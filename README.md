@@ -40,6 +40,10 @@ void setup()
     LOG_SET_LEVEL(DebugLogLevel::WARNINGS); // ERROR and WARNING is printed
     LOG_SET_LEVEL(DebugLogLevel::VERBOSE); // all log is printed
 
+    // set log output format options (show file, line, and func)
+    // default: true, true, true
+    LOG_SET_OPTION(false, false, true);
+
     LOG_ERROR("this is error log");
     LOG_WARNING("this is warning log");
     LOG_VERBOSE("this is verbose log");

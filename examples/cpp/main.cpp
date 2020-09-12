@@ -32,6 +32,15 @@ int main()
 	LOG_WARNING("this is warning log");
 	LOG_VERBOSE("this is verbose log");
 
+	LOG_SET_LEVEL(DebugLogLevel::VERBOSE);
+	PRINTLN("change log level to VERBOSE");
+	LOG_SET_OPTION(false, false, false);
+	PRINTLN("disable file, line, and func from output format");
+
+	LOG_ERROR("this is error log");
+	LOG_WARNING("this is warning log");
+	LOG_VERBOSE("this is verbose log");
+
 	int x = 1;
 	ASSERT(x != 1); // in c++ app, standard assert is used
 }
