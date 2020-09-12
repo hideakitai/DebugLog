@@ -125,6 +125,7 @@ namespace debug {
         Logger* logger {nullptr};
 #endif
         LogLevel log_level = LogLevel::VERBOSE;
+        string_t delim {" "};
         bool b_file {true};
         bool b_line {true};
         bool b_func {true};
@@ -192,16 +193,20 @@ namespace debug {
             if (!b_only_sd)
             {
                 stream->print(head);
-                stream->print(" ");
+                if (sizeof...(tail) != 0)
+                    stream->print(delim);
             }
             if (logger)
             {
                 logger->print(head);
-                logger->print(" ");
+                if (sizeof...(tail) != 0)
+                    logger->print(delim);
             }
             print(detail::forward<Tail>(tail)...);
 #else
-            std::cout << head << " ";
+            std::cout << head;
+            if (sizeof...(tail) != 0)
+                std::cout << delim;
             print(std::forward<Tail>(tail)...);
 #endif
         }
@@ -230,16 +235,20 @@ namespace debug {
             if (!b_only_sd)
             {
                 stream->print(head);
-                stream->print(" ");
+                if (sizeof...(tail) != 0)
+                    stream->print(delim);
             }
             if (logger)
             {
                 logger->print(head);
-                logger->print(" ");
+                if (sizeof...(tail) != 0)
+                    logger->print(delim);
             }
             println(detail::forward<Tail>(tail)...);
 #else
-            std::cout << head << " ";
+            std::cout << head;
+            if (sizeof...(tail) != 0)
+                std::cout << delim;
             println(std::forward<Tail>(tail)...);
 #endif
         }
@@ -249,7 +258,8 @@ namespace debug {
         {
             while (!b)
             {
-                println("[ ASSERT ]", file, ":", line, ":", func, "() :", expr);
+                string_t str = string_t("[ASSERT] ") + file + string_t(" ") + line + string_t(" ") + func + string_t(" : ") + expr;
+                println(str);
                 if (logger) logger->flush();
                 delay(1000);
             }
@@ -268,19 +278,26 @@ namespace debug {
                 string_t lvl_str;
                 switch (level)
                 {
-                    case LogLevel::ERRORS:   lvl_str = "ERROR";   break;
-                    case LogLevel::WARNINGS: lvl_str = "WARNING"; break;
-                    case LogLevel::VERBOSE:  lvl_str = "VERBOSE"; break;
-                    default:                 lvl_str = "";        break;
+                    case LogLevel::ERRORS:   lvl_str = "[ERROR] ";   break;
+                    case LogLevel::WARNINGS: lvl_str = "[WARNING] "; break;
+                    case LogLevel::VERBOSE:  lvl_str = "[VERBOSE] "; break;
+                    default:                 lvl_str = "";           break;
                 }
 
-                print("[", lvl_str, "]");
-                if (b_file) print(file, ":");
-                if (b_line) print(line, ":");
-                if (b_func) print(func, ":");
+                string_t header = lvl_str;
 #ifdef ARDUINO
+                if (b_file) header += file + string_t(" ");
+                if (b_line) header += string_t("L.") + line + string_t(" ");
+                if (b_func) header += func + string_t(" ");
+                header += string_t(": ");
+                print(header);
                 println(detail::forward<Args>(args)...);
 #else
+                if (b_file) { header += file; header += " "; };
+                if (b_line) { header += "L."; header += std::to_string(line); header += " "; }
+                if (b_func) { header += func; header += " "; } ;
+                header += ": ";
+                print(header);
                 println(std::forward<Args>(args)...);
 #endif
             }
@@ -291,6 +308,11 @@ namespace debug {
             b_file = en_file;
             b_line = en_line;
             b_func = en_func;
+        }
+
+        void delimiter(const string_t& del)
+        {
+            delim = del;
         }
     };
 
@@ -311,6 +333,7 @@ using DebugLogLevel = arx::debug::LogLevel;
 #define LOG_GET_LEVEL() ((void)0)
 #define LOG_SET_LEVEL(l) ((void)0)
 #define LOG_SET_OPTION(...) ((void)0)
+#define LOG_SET_DELIMITER(...) ((void)0)
 #define LOG_ATTACH_SERIAL() ((void)0)
 #define LOG_ATTACH_SD(l) ((void)0)
 #define LOG_SD_FLUSH() ((void)0)
@@ -328,6 +351,7 @@ using DebugLogLevel = arx::debug::LogLevel;
 #define LOG_GET_LEVEL() DebugLog::Manager::get().logLevel()
 #define LOG_SET_LEVEL(l) DebugLog::Manager::get().logLevel(l)
 #define LOG_SET_OPTION(file, line, func) DebugLog::Manager::get().option(file, line, func)
+#define LOG_SET_DELIMITER(d) DebugLog::Manager::get().delimiter(d)
 #ifdef ARDUINO
     #define LOG_ATTACH_SERIAL(s) DebugLog::Manager::get().attach(s)
     #define LOG_ATTACH_SD(s, p, b, ...) DebugLog::Manager::get().attach(s, p, b, __VA_ARGS__)

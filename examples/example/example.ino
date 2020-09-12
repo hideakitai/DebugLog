@@ -52,6 +52,10 @@ void setup()
   LOG_WARNING("this is warning log");
   LOG_VERBOSE("this is verbose log");
 
+	LOG_SET_DELIMITER(" and ");
+  PRINTLN("change delimtier from \" \" to \" and \"");
+	LOG_VERBOSE(1, 2, 3, 4, 5);
+
   delay(5000);
 
   int x = 1;
