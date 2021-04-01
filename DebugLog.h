@@ -322,29 +322,6 @@ using DebugLogLevel = arx::debug::LogLevel;
 // PRINT and PRINTLN are always enabled regardless of debug mode or release mode
 #define PRINT(...) DebugLog::Manager::get().print(__VA_ARGS__)
 #define PRINTLN(...) DebugLog::Manager::get().println(__VA_ARGS__)
-
-#ifdef NDEBUG
-
-#define LOG_ERROR(...) ((void)0)
-#define LOG_WARNING(...) ((void)0)
-#define LOG_VERBOSE(...) ((void)0)
-#define LOG_GET_LEVEL() ((void)0)
-#define LOG_SET_LEVEL(l) ((void)0)
-#define LOG_SET_OPTION(...) ((void)0)
-#define LOG_SET_DELIMITER(...) ((void)0)
-#define LOG_ATTACH_SERIAL() ((void)0)
-#define LOG_ATTACH_SD(l) ((void)0)
-#define LOG_SD_FLUSH() ((void)0)
-#define LOG_SD_CLOSE() ((void)0)
-#define ASSERT(b) ((void)0)
-
-#else  // NDEBUG
-
-#define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 \
-                                                                                                    : __FILE__)
-#define LOG_ERROR(...) DebugLog::Manager::get().log(arx::debug::LogLevel::ERRORS, __FILENAME__, __LINE__, __func__, __VA_ARGS__)
-#define LOG_WARNING(...) DebugLog::Manager::get().log(arx::debug::LogLevel::WARNINGS, __FILENAME__, __LINE__, __func__, __VA_ARGS__)
-#define LOG_VERBOSE(...) DebugLog::Manager::get().log(arx::debug::LogLevel::VERBOSE, __FILENAME__, __LINE__, __func__, __VA_ARGS__)
 #define LOG_GET_LEVEL() DebugLog::Manager::get().logLevel()
 #define LOG_SET_LEVEL(l) DebugLog::Manager::get().logLevel(l)
 #define LOG_SET_OPTION(file, line, func) DebugLog::Manager::get().option(file, line, func)
@@ -352,14 +329,8 @@ using DebugLogLevel = arx::debug::LogLevel;
 #ifdef ARDUINO
 #define LOG_ATTACH_SERIAL(s) DebugLog::Manager::get().attach(s)
 #define LOG_ATTACH_SD(s, p, b, ...) DebugLog::Manager::get().attach(s, p, b, __VA_ARGS__)
-#define LOG_SD_FLUSH() DebugLog::Manager::get().flush()
-#define LOG_SD_CLOSE() DebugLog::Manager::get().close()
-#define ASSERT(b) DebugLog::Manager::get().assertion((b), __FILENAME__, __LINE__, __func__, #b)
-#else
-#include <cassert>
-#define ASSERT(b) assert(b)
-#endif
+#endif  // ARDUINO
 
-#endif  // #ifdef NDEBUG
+#include "DebugLogRestoreState.h"
 
 #endif  // ARX_DEBUGLOG_H
