@@ -170,6 +170,7 @@ Please see practical example  `examples/control_scope` for details.
 
 ## Used Inside of
 
+- [ArduinoOSC](https://github.com/hideakitai/ArduinoOSC)
 - [MsgPack](https://github.com/hideakitai/MsgPack)
 - [ES920](https://github.com/hideakitai/ES920)
 
