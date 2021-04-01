@@ -1,5 +1,5 @@
 // uncommend NDEBUG disables ASSERT and all debug serial (Release Mode)
-//#define NDEBUG
+// #define NDEBUG
 
 // if you want to use standard SD library
 #include <SD.h>
