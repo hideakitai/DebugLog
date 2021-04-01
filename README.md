@@ -28,6 +28,7 @@ void setup() {
     // you can change target stream (default: Serial, only for Arduino)
     // LOG_ATTACH_SERIAL(Serial2);
 
+    // PRINT and PRINTLN are always enabled regardless of debug mode or release mode
     PRINT("this is for debug");
     PRINTLN(1, 2.2, "you can", "print variable args")
 

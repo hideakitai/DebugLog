@@ -319,10 +319,12 @@ namespace debug {
 namespace DebugLog = arx::debug;
 using DebugLogLevel = arx::debug::LogLevel;
 
+// PRINT and PRINTLN are always enabled regardless of debug mode or release mode
+#define PRINT(...) DebugLog::Manager::get().print(__VA_ARGS__)
+#define PRINTLN(...) DebugLog::Manager::get().println(__VA_ARGS__)
+
 #ifdef NDEBUG
 
-#define PRINT(...) ((void)0)
-#define PRINTLN(...) ((void)0)
 #define LOG_ERROR(...) ((void)0)
 #define LOG_WARNING(...) ((void)0)
 #define LOG_VERBOSE(...) ((void)0)
@@ -340,8 +342,6 @@ using DebugLogLevel = arx::debug::LogLevel;
 
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 \
                                                                                                     : __FILE__)
-#define PRINT(...) DebugLog::Manager::get().print(__VA_ARGS__)
-#define PRINTLN(...) DebugLog::Manager::get().println(__VA_ARGS__)
 #define LOG_ERROR(...) DebugLog::Manager::get().log(arx::debug::LogLevel::ERRORS, __FILENAME__, __LINE__, __func__, __VA_ARGS__)
 #define LOG_WARNING(...) DebugLog::Manager::get().log(arx::debug::LogLevel::WARNINGS, __FILENAME__, __LINE__, __func__, __VA_ARGS__)
 #define LOG_VERBOSE(...) DebugLog::Manager::get().log(arx::debug::LogLevel::VERBOSE, __FILENAME__, __LINE__, __func__, __VA_ARGS__)
