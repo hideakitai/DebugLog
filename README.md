@@ -22,8 +22,7 @@ These macros can be used in standard C++ apps.
 
 #include <DebugLog.h>
 
-void setup()
-{
+void setup() {
     Serial.begin(115200);
 
     // you can change target stream (default: Serial, only for Arduino)
@@ -60,8 +59,7 @@ void setup()
 ### Log Level
 
 ```C++
-enum class LogLevel
-{
+enum class LogLevel {
     NONE     = 0,
     ERRORS   = 1,
     WARNINGS = 2,
@@ -83,10 +81,8 @@ enum class LogLevel
 // after that, include DebugLog.h
 #include <DebugLog.h>
 
-void setup()
-{
-  if (SD.begin())
-  {
+void setup() {
+  if (SD.begin()) {
     String filename = "test.txt";
     LOG_ATTACH_SD(SD, filename, false, true);
     // 3rd arg => true: auto save every logging, false: manually save
