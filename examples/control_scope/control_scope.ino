@@ -1,5 +1,5 @@
-// uncommend NDEBUG disables ASSERT and all debug serial (Release Mode)
-// #define NDEBUG
+// uncommend DEBUGLOG_RELEASE_MODE disables ASSERT and all debug serial (Release Mode)
+// #define DEBUGLOG_RELEASE_MODE
 
 #include <DebugLog.h>
 

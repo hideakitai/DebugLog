@@ -6,7 +6,7 @@ Serial based assertion and log library for Arduino
 ## Feature
 
 - print variadic arguments in one line
-- release mode (`#define NDEBUG`) can disables print/log debug info
+- release mode (`#define DEBUGLOG_RELEASE_MODE`) can disables print/log debug info
 - log level control
 - control automatically/manually saving to SD card
 - [SdFat](https://github.com/greiman/SdFat) support
@@ -17,8 +17,8 @@ Serial based assertion and log library for Arduino
 These macros can be used in standard C++ apps.
 
 ```C++
-// uncommend NDEBUG disables ASSERT and all debug serial (Release Mode)
-//#define NDEBUG
+// uncommend DEBUGLOG_RELEASE_MODE disables ASSERT and all debug serial (Release Mode)
+//#define DEBUGLOG_RELEASE_MODE
 
 #include <DebugLog.h>
 

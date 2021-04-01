@@ -1,5 +1,5 @@
-// uncommend NDEBUG disables ASSERT and all debug serial (Release Mode)
-//#define NDEBUG
+// uncommend DEBUGLOG_RELEASE_MODE disables ASSERT and all debug serial (Release Mode)
+//#define DEBUGLOG_RELEASE_MODE
 
 // if you want to use standard SD library
 #include <SD.h>
@@ -73,6 +73,6 @@ void setup() {
 }
 
 void loop() {
-    PRINTLN("if NDEBUG is commented out (assert is enabled), does not come here");
+    PRINTLN("if DEBUGLOG_RELEASE_MODE is commented out (assert is enabled), does not come here");
     delay(1000);
 }

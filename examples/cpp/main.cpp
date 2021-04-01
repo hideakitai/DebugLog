@@ -1,4 +1,4 @@
-//#define NDEBUG
+//#define DEBUGLOG_RELEASE_MODE
 
 #include "../../DebugLog.h"
 
