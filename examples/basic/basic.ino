@@ -1,6 +1,9 @@
 // uncommend DEBUGLOG_RELEASE_MODE disables ASSERT and all debug serial (Release Mode)
 // #define DEBUGLOG_RELEASE_MODE
 
+// you can also set default log level by defining macro
+// #define DEBUGLOG_DEFAULT_LOGLEVEL LogLevel::WARNINGS
+
 #include <DebugLog.h>
 
 void setup() {

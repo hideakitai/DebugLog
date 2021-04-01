@@ -121,12 +121,17 @@ namespace debug {
                           WARNINGS,
                           VERBOSE };
 
+#ifndef DEBUGLOG_DEFAULT_LOGLEVEL
+#define DEBUGLOG_DEFAULT_LOGLEVEL LogLevel::VERBOSE
+#endif
+// #define DEBUGLOG_DEFAULT_LOGLEVEL LogLevel::WARNINGS
+
     class Manager {
 #ifdef ARDUINO
         Stream* stream {&Serial};
         Logger* logger {nullptr};
 #endif
-        LogLevel log_level = LogLevel::VERBOSE;
+        LogLevel log_level {DEBUGLOG_DEFAULT_LOGLEVEL};
         string_t delim {" "};
         bool b_file {true};
         bool b_line {true};
