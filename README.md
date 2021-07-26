@@ -109,12 +109,12 @@ enum class LogLevel {
 ### Log Base
 
 ```C++
-    enum class LogBase {
-        DEC = 10,
-        HEX = 16,
-        OCT = 8,
-        BIN = 2,  // only for Arduino
-    };
+enum class LogBase {
+    DEC = 10,
+    HEX = 16,
+    OCT = 8,
+    BIN = 2,  // only for Arduino
+};
 ```
 
 ### Save Log to SD Card
