@@ -116,15 +116,16 @@ namespace debug {
 
 #endif  // sd loggers
 
-    enum class LogLevel { NONE,
-                          ERRORS,
-                          WARNINGS,
-                          VERBOSE };
+    enum class LogLevel {
+        NONE,
+        ERRORS,
+        WARNINGS,
+        VERBOSE
+    };
 
 #ifndef DEBUGLOG_DEFAULT_LOGLEVEL
 #define DEBUGLOG_DEFAULT_LOGLEVEL LogLevel::VERBOSE
 #endif
-// #define DEBUGLOG_DEFAULT_LOGLEVEL LogLevel::WARNINGS
 
     class Manager {
 #ifdef ARDUINO
