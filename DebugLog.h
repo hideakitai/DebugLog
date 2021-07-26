@@ -11,6 +11,25 @@
 #include <string.h>
 #endif
 
+#ifdef ARDUINO
+#ifdef DEC
+#undef DEC
+static constexpr uint8_t DEC {10};
+#endif
+#ifdef HEX
+#undef HEX
+static constexpr uint8_t HEX {16};
+#endif
+#ifdef OCT
+#undef OCT
+static constexpr uint8_t OCT {8};
+#endif
+#ifdef BIN
+#undef BIN
+static constexpr uint8_t BIN {2};
+#endif
+#endif
+
 namespace arx {
 namespace debug {
 
@@ -123,6 +142,15 @@ namespace debug {
         VERBOSE
     };
 
+    enum class LogBase {
+        DEC = 10,
+        HEX = 16,
+        OCT = 8,
+#ifdef ARDUINO
+        BIN = 2,
+#endif
+    };
+
 #ifndef DEBUGLOG_DEFAULT_LOGLEVEL
 #define DEBUGLOG_DEFAULT_LOGLEVEL LogLevel::VERBOSE
 #endif
@@ -133,12 +161,15 @@ namespace debug {
         Logger* logger {nullptr};
 #endif
         LogLevel log_level {DEBUGLOG_DEFAULT_LOGLEVEL};
+        LogBase log_base {LogBase::DEC};
         string_t delim {" "};
         bool b_file {true};
         bool b_line {true};
         bool b_func {true};
+#ifdef ARDUINO
         bool b_auto_save {false};
         bool b_only_sd {false};
+#endif
 
         // singleton
         Manager() {}
@@ -189,22 +220,10 @@ namespace debug {
 
         template <typename Head, typename... Tail>
         void print(Head&& head, Tail&&... tail) {
+            print_impl(head, sizeof...(tail));
 #ifdef ARDUINO
-            if (!b_only_sd) {
-                stream->print(head);
-                if (sizeof...(tail) != 0)
-                    stream->print(delim);
-            }
-            if (logger) {
-                logger->print(head);
-                if (sizeof...(tail) != 0)
-                    logger->print(delim);
-            }
             print(detail::forward<Tail>(tail)...);
 #else
-            std::cout << head;
-            if (sizeof...(tail) != 0)
-                std::cout << delim;
             print(std::forward<Tail>(tail)...);
 #endif
         }
@@ -225,22 +244,10 @@ namespace debug {
 
         template <typename Head, typename... Tail>
         void println(Head&& head, Tail&&... tail) {
+            print_impl(head, sizeof...(tail));
 #ifdef ARDUINO
-            if (!b_only_sd) {
-                stream->print(head);
-                if (sizeof...(tail) != 0)
-                    stream->print(delim);
-            }
-            if (logger) {
-                logger->print(head);
-                if (sizeof...(tail) != 0)
-                    logger->print(delim);
-            }
             println(detail::forward<Tail>(tail)...);
 #else
-            std::cout << head;
-            if (sizeof...(tail) != 0)
-                std::cout << delim;
             println(std::forward<Tail>(tail)...);
 #endif
         }
@@ -317,6 +324,56 @@ namespace debug {
         void delimiter(const string_t& del) {
             delim = del;
         }
+
+    private:
+        template <typename Head>
+        void print_impl(Head&& head, const size_t size) {
+#ifdef ARDUINO
+            if (!b_only_sd) {
+                print_exec(head, stream);
+                if (size != 0)
+                    stream->print(delim);
+            }
+            if (logger) {
+                print_exec(head, logger);
+                if (size != 0)
+                    logger->print(delim);
+            }
+#else
+            print_exec(head);
+            if (size != 0)
+                std::cout << delim;
+#endif
+        }
+
+        void print_impl(LogBase& head, const size_t) {
+            log_base = head;
+        }
+
+#ifdef ARDUINO
+        template <typename Head, typename S>
+        void print_exec(Head&& head, S* s) { s->print(head); }
+        template <typename S>
+        void print_exec(unsigned char head, S* s) { s->print(head, (int)log_base); }
+        template <typename S>
+        void print_exec(int head, S* s) { s->print(head, (int)log_base); }
+        template <typename S>
+        void print_exec(unsigned int head, S* s) { s->print(head, (int)log_base); }
+        template <typename S>
+        void print_exec(long head, S* s) { s->print(head, (int)log_base); }
+        template <typename S>
+        void print_exec(unsigned long head, S* s) { s->print(head, (int)log_base); }
+#else
+        template <typename Head>
+        void print_exec(Head&& head) {
+            switch (log_base) {
+                case LogBase::DEC: std::cout << std::dec; break;
+                case LogBase::HEX: std::cout << std::hex; break;
+                case LogBase::OCT: std::cout << std::oct; break;
+            }
+            std::cout << head;
+        }
+#endif
     };
 
 }  // namespace debug
@@ -324,6 +381,7 @@ namespace debug {
 
 namespace DebugLog = arx::debug;
 using DebugLogLevel = arx::debug::LogLevel;
+using DebugLogBase = arx::debug::LogBase;
 
 // PRINT and PRINTLN are always enabled regardless of debug mode or release mode
 #define PRINT(...) DebugLog::Manager::get().print(__VA_ARGS__)
