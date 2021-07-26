@@ -3,8 +3,12 @@
 #include "../../DebugLog.h"
 
 int main() {
-    PRINT("this is for debug");
+    PRINT("this is for debug", ":");
     PRINTLN(1, 2.2, "you can", "print variable args");
+    PRINTLN("you can print variable args with bases",
+        DebugLogBase::OCT, 85,
+        DebugLogBase::DEC, 85,
+        DebugLogBase::HEX, 85);
 
     LOG_ERROR("this is error log");
     LOG_WARNING("this is warning log");

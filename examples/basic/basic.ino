@@ -13,8 +13,13 @@ void setup() {
     // you can change target stream (default: Serial)
     // DebugLog::attach(Serial2);
 
-    PRINT("this is for debug");
+    PRINT("this is for debug", ":");
     PRINTLN(1, 2.2, "you can", "print variable args");
+    PRINTLN("you can print variable args with bases",
+        DebugLogBase::BIN, 85,
+        DebugLogBase::OCT, 85,
+        DebugLogBase::DEC, 85,
+        DebugLogBase::HEX, 85);
     PRINTLN("current log level is", (int)LOG_GET_LEVEL());  // 0: NONE, 1: ERRORS, 2: WARNINGS, 3: VERBOSE
 
     LOG_ERROR("this is error log");
