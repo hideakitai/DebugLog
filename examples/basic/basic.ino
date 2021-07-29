@@ -15,6 +15,9 @@ void setup() {
 
     PRINT("this is for debug", ":");
     PRINTLN(1, 2.2, "you can", "print variable args");
+
+    // you can change auto reset for base setting (default: true)
+    // LOG_SET_BASE_RESET(false);
     PRINTLN("you can print variable args with bases",
         DebugLogBase::BIN, 85,
         DebugLogBase::OCT, 85,
