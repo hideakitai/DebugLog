@@ -166,6 +166,7 @@ namespace debug {
         bool b_file {true};
         bool b_line {true};
         bool b_func {true};
+        bool b_base_reset {true};
 #ifdef ARDUINO
         bool b_auto_save {false};
         bool b_only_sd {false};
@@ -216,6 +217,7 @@ namespace debug {
 #ifdef ARDUINO
             if (logger && b_auto_save) logger->flush();
 #endif
+            if (b_base_reset) log_base = LogBase::DEC;
         }
 
         template <typename Head, typename... Tail>
@@ -240,6 +242,7 @@ namespace debug {
 #else
             std::cout << std::endl;
 #endif
+            if (b_base_reset) log_base = LogBase::DEC;
         }
 
         template <typename Head, typename... Tail>
@@ -325,6 +328,10 @@ namespace debug {
             delim = del;
         }
 
+        void base_reset(const bool b) {
+            b_base_reset = b;
+        }
+
     private:
         template <typename Head>
         void print_impl(Head&& head, const size_t size) {
@@ -396,6 +403,7 @@ using DebugLogBase = arx::debug::LogBase;
 #define LOG_SET_LEVEL(l) DebugLog::Manager::get().logLevel(l)
 #define LOG_SET_OPTION(file, line, func) DebugLog::Manager::get().option(file, line, func)
 #define LOG_SET_DELIMITER(d) DebugLog::Manager::get().delimiter(d)
+#define LOG_SET_BASE_RESET(b) DebugLog::Manager::get().base_reset(b)
 #ifdef ARDUINO
 #define LOG_ATTACH_SERIAL(s) DebugLog::Manager::get().attach(s)
 #define LOG_ATTACH_SD(s, p, b, ...) DebugLog::Manager::get().attach(s, p, b, __VA_ARGS__)
