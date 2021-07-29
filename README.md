@@ -32,6 +32,9 @@ void setup() {
     // PRINT and PRINTLN are always enabled regardless of debug mode or release mode
     PRINT("this is for debug");
     PRINTLN(1, 2.2, "you can", "print variable args")
+
+    // you can change auto reset for base setting (default: true)
+    // LOG_SET_BASE_RESET(false);
     PRINTLN("you can print variable args with bases",
         DebugLogBase::OCT, 85,   // 0o125
         DebugLogBase::DEC, 85,   // 0d85
@@ -77,6 +80,7 @@ These APIs are enabled only in debug mode.
 #define LOG_VERBOSE(...)
 #define ASSERT(b)
 ```
+
 Several options can be used.
 
 ```C++
@@ -84,6 +88,7 @@ Several options can be used.
 #define LOG_SET_LEVEL(l)
 #define LOG_SET_OPTION(file, line, func)
 #define LOG_SET_DELIMITER(d)
+#define LOG_SET_BASE_RESET(b)
 // Arduino Only
 #define LOG_SD_FLUSH()
 #define LOG_SD_CLOSE()
