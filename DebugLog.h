@@ -354,7 +354,13 @@ namespace debug {
         template <typename Head, typename S>
         void print_exec(Head&& head, S* s) { s->print(head); }
         template <typename S>
+        void print_exec(signed char head, S* s) { s->print(head, (int)log_base); }
+        template <typename S>
         void print_exec(unsigned char head, S* s) { s->print(head, (int)log_base); }
+        template <typename S>
+        void print_exec(short head, S* s) { s->print(head, (int)log_base); }
+        template <typename S>
+        void print_exec(unsigned short head, S* s) { s->print(head, (int)log_base); }
         template <typename S>
         void print_exec(int head, S* s) { s->print(head, (int)log_base); }
         template <typename S>
