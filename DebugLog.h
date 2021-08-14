@@ -421,6 +421,8 @@ using DebugLogBase = arx::debug::LogBase;
 #define LOG_SET_DELIMITER(d) DebugLog::Manager::get().delimiter(d)
 #define LOG_SET_BASE_RESET(b) DebugLog::Manager::get().base_reset(b)
 #ifdef ARDUINO
+#define LOG_GET_SAVE_LEVEL() DebugLog::Manager::get().saveLevel()
+#define LOG_SET_SAVE_LEVEL(l) DebugLog::Manager::get().saveLevel(l)
 #define LOG_ATTACH_SERIAL(s) DebugLog::Manager::get().attach(s)
 #define LOG_ATTACH_SD(s, p, b, ...) DebugLog::Manager::get().attach(s, p, b, __VA_ARGS__)
 #endif  // ARDUINO
