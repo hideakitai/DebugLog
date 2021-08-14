@@ -163,6 +163,7 @@ namespace debug {
         Logger* logger {nullptr};
 #endif
         LogLevel log_level {DEBUGLOG_DEFAULT_LOGLEVEL};
+        LogLevel curr_level {DEBUGLOG_DEFAULT_LOGLEVEL};
         LogBase log_base {LogBase::DEC};
         string_t delim {" "};
         bool b_file {true};
@@ -170,6 +171,7 @@ namespace debug {
         bool b_func {true};
         bool b_base_reset {true};
 #ifdef ARDUINO
+        LogLevel save_level {DEBUGLOG_DEFAULT_LOGLEVEL};
         bool b_auto_save {false};
         bool b_only_sd {false};
 #endif
@@ -269,14 +271,20 @@ namespace debug {
 #endif
 
         void logLevel(const LogLevel l) { log_level = l; }
-        LogLevel logLevel() { return log_level; }
+        LogLevel logLevel() const { return log_level; }
+
+#ifdef ARDUINO
+        void saveLevel(const LogLevel l) { save_level = l; }
+        LogLevel saveLevel() const { return save_level; }
+#endif
 
         template <typename... Args>
         void log(LogLevel level, const char* file, int line, const char* func, Args&&... args) {
-            if ((log_level == LogLevel::NONE) || (level == LogLevel::NONE)) return;
-            if ((int)level <= (int)log_level) {
+            curr_level = level;
+            if ((log_level == LogLevel::NONE) || (curr_level == LogLevel::NONE)) return;
+            if ((int)curr_level <= (int)log_level) {
                 string_t lvl_str;
-                switch (level) {
+                switch (curr_level) {
                     case LogLevel::ERROR:
                         lvl_str = "[ERROR] ";
                         break;
@@ -349,7 +357,7 @@ namespace debug {
                 if (size != 0)
                     stream->print(delim);
             }
-            if (logger) {
+            if (logger && ((int)curr_level <= (int)save_level)) {
                 print_exec(head, logger);
                 if (size != 0)
                     logger->print(delim);
