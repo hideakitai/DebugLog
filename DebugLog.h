@@ -137,9 +137,11 @@ namespace debug {
 
     enum class LogLevel {
         NONE,
-        ERRORS,
-        WARNINGS,
-        VERBOSE
+        ERROR,
+        WARN,
+        INFO,
+        DEBUG,
+        TRACE
     };
 
     enum class LogBase {
@@ -152,7 +154,7 @@ namespace debug {
     };
 
 #ifndef DEBUGLOG_DEFAULT_LOGLEVEL
-#define DEBUGLOG_DEFAULT_LOGLEVEL LogLevel::VERBOSE
+#define DEBUGLOG_DEFAULT_LOGLEVEL LogLevel::INFO
 #endif
 
     class Manager {
@@ -275,14 +277,20 @@ namespace debug {
             if ((int)level <= (int)log_level) {
                 string_t lvl_str;
                 switch (level) {
-                    case LogLevel::ERRORS:
+                    case LogLevel::ERROR:
                         lvl_str = "[ERROR] ";
                         break;
-                    case LogLevel::WARNINGS:
-                        lvl_str = "[WARNING] ";
+                    case LogLevel::WARN:
+                        lvl_str = "[WARN] ";
                         break;
-                    case LogLevel::VERBOSE:
-                        lvl_str = "[VERBOSE] ";
+                    case LogLevel::INFO:
+                        lvl_str = "[INFO] ";
+                        break;
+                    case LogLevel::DEBUG:
+                        lvl_str = "[DEBUG] ";
+                        break;
+                    case LogLevel::TRACE:
+                        lvl_str = "[TRACE] ";
                         break;
                     default:
                         lvl_str = "";

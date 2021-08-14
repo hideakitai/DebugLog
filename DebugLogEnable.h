@@ -1,6 +1,8 @@
 #undef LOG_ERROR
-#undef LOG_WARNING
-#undef LOG_VERBOSE
+#undef LOG_WARN
+#undef LOG_INFO
+#undef LOG_DEBUG
+#undef LOG_TRACE
 #ifdef ARDUINO
 #undef LOG_SD_FLUSH
 #undef LOG_SD_CLOSE
@@ -9,9 +11,11 @@
 
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 \
                                                                                                     : __FILE__)
-#define LOG_ERROR(...) DebugLog::Manager::get().log(arx::debug::LogLevel::ERRORS, __FILENAME__, __LINE__, __func__, __VA_ARGS__)
-#define LOG_WARNING(...) DebugLog::Manager::get().log(arx::debug::LogLevel::WARNINGS, __FILENAME__, __LINE__, __func__, __VA_ARGS__)
-#define LOG_VERBOSE(...) DebugLog::Manager::get().log(arx::debug::LogLevel::VERBOSE, __FILENAME__, __LINE__, __func__, __VA_ARGS__)
+#define LOG_ERROR(...) DebugLog::Manager::get().log(arx::debug::LogLevel::ERROR, __FILENAME__, __LINE__, __func__, __VA_ARGS__)
+#define LOG_WARN(...) DebugLog::Manager::get().log(arx::debug::LogLevel::WARN, __FILENAME__, __LINE__, __func__, __VA_ARGS__)
+#define LOG_INFO(...) DebugLog::Manager::get().log(arx::debug::LogLevel::INFO, __FILENAME__, __LINE__, __func__, __VA_ARGS__)
+#define LOG_DEBUG(...) DebugLog::Manager::get().log(arx::debug::LogLevel::DEBUG, __FILENAME__, __LINE__, __func__, __VA_ARGS__)
+#define LOG_TRACE(...) DebugLog::Manager::get().log(arx::debug::LogLevel::TRACE, __FILENAME__, __LINE__, __func__, __VA_ARGS__)
 
 #ifdef ARDUINO
 #define LOG_SD_FLUSH() DebugLog::Manager::get().flush()
