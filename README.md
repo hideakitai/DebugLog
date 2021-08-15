@@ -2,165 +2,117 @@
 
 Serial based assertion and log library for Arduino
 
-
 ## Feature
 
-- print variadic arguments in one line
-- release mode (`#define DEBUGLOG_RELEASE_MODE`) can disables debug info (`LOG_XXXX`)
-- log level control
-- control automatically/manually saving to SD card
-- [SdFat](https://github.com/greiman/SdFat) support
+- Printing variadic arguments in one line
+- Release mode : `#define DEBUGLOG_RELEASE_MODE` can disables debug info (`LOG_XXXX`)
+- Log level control (`ERROR`, `WARN`, `INFO`, `DEBUG`, `TRACE`)
+- Automatically or manually saving log to file
+- Multiple file system support (`SdFat`, `SPIFFS`, etc.)
+- APIs can be used in standard C++ apps
 
-
-## Usage
+## Basic Usage
 
 ```C++
-// uncommend DEBUGLOG_RELEASE_MODE disables ASSERT and all debug serial (Release Mode)
-//#define DEBUGLOG_RELEASE_MODE
+// Uncommenting DEBUGLOG_RELEASE_MODE disables ASSERT and all log (Release Mode)
+// PRINT and PRINTLN are always valid even in Release Mode
+// #define DEBUGLOG_RELEASE_MODE
 
-// you can also set default log level by defining macro
-// #define DEBUGLOG_DEFAULT_LOGLEVEL LogLevel::WARNINGS
+// You can also set default log level by defining macro
+// #define DEBUGLOG_DEFAULT_LOGLEVEL LogLevel::WARN
 
 #include <DebugLog.h>
 
 void setup() {
     Serial.begin(115200);
+    delay(2000);
 
-    // you can change target stream (default: Serial, only for Arduino)
-    // LOG_ATTACH_SERIAL(Serial2);
+    // PRINT and PRINTLN is not affected by log_level (always visible)
+    PRINT("DebugLog", "can print variable args: ");
+    PRINTLN(1, 2.2, "three", "=> like this");
 
-    // PRINT and PRINTLN are always enabled regardless of debug mode or release mode
-    PRINT("this is for debug");
-    PRINTLN(1, 2.2, "you can", "print variable args")
+    // You can change log_leval by following macro
+    // LOG_SET_LEVEL(DebugLogLevel::TRACE);
 
-    // you can change auto reset for base setting (default: true)
-    // LOG_SET_BASE_RESET(false);
-    PRINTLN("you can print variable args with bases",
-        DebugLogBase::OCT, 85,   // 0o125
-        DebugLogBase::DEC, 85,   // 0d85
-        DebugLogBase::HEX, 85);  // 0x55
+    // The default log_leval is DebugLogLevel::INFO
+    // 0: NONE, 1: ERROR, 2: WARN, 3: INFO, 4: DEBUG, 5: TRACE
+    // PRINTLN("current log level is", (int)LOG_GET_LEVEL());
 
-    // check log level 0: NONE, 1: ERRORS, 2: WARNINGS, 3: VERBOSE
-    PRINTLN("current log level is", (int)LOG_GET_LEVEL());
-
-    // set log level (default: DebugLogLevel::VERBOSE)
-    LOG_SET_LEVEL(DebugLogLevel::ERRORS); // only ERROR log is printed
-    LOG_SET_LEVEL(DebugLogLevel::WARNINGS); // ERROR and WARNING is printed
-    LOG_SET_LEVEL(DebugLogLevel::VERBOSE); // all log is printed
-
-    // set log output format options (show file, line, and func)
-    // default: true, true, true
-    LOG_SET_OPTION(false, false, true);
-
+    // The default log_leval is DebugLogLevel::INFO
     LOG_ERROR("this is error log");
-    LOG_WARNING("this is warning log");
-    LOG_VERBOSE("this is verbose log");
+    LOG_WARN("this is warn log");
+    LOG_INFO("this is info log");
+    LOG_DEBUG("this is debug log");  // won't be printed
+    LOG_TRACE("this is trace log");  // won't be printed
 
-    // you can change delimiter from default " " to anything
-    LOG_SET_DELIMITER(" and ");
-    LOG_VERBOSE(1, 2, 3, 4, 5);
+    // Log array
+    float arr[3] {1.1, 2.2, 3.3};
+    PRINTLN("Array can be also printed like this", LOG_AS_ARR(arr, 3));
 
+#if ARX_HAVE_LIBSTDCPLUSPLUS >= 201103L  // Have libstdc++11
+    // Log containers
+    std::vector<int> vs {1, 2, 3};
+    std::deque<float> ds {1.1, 2.2, 3.3};
+    std::map<String, int> ms {{"one", 1}, {"two", 2}, {"three", 3}};
+    PRINTLN("Containers can also be printed like", vs, ds, ms);
+#endif
+
+    delay(1000);
+
+    // You can also use assert
+    // If assertion failed, Serial endlessly prints message
     int x = 1;
-    ASSERT(x != 1); // if assertion failed, Serial endlessly prints message
+    ASSERT(x != 1);
 }
 ```
-Available macros are listed below.
-`PRINT` and  `PRINTLN` are available in both release and debug mode.
 
-```C++
-#define PRINT(...)
-#define PRINTLN(...)
-```
-
-These APIs are enabled only in debug mode.
-
-```C++
-#define LOG_ERROR(...)
-#define LOG_WARNING(...)
-#define LOG_VERBOSE(...)
-#define ASSERT(b)
-```
-
-Several options can be used.
-
-```C++
-#define LOG_GET_LEVEL()
-#define LOG_SET_LEVEL(l)
-#define LOG_SET_OPTION(file, line, func)
-#define LOG_SET_DELIMITER(d)
-#define LOG_SET_BASE_RESET(b)
-// Arduino Only
-#define LOG_SD_FLUSH()
-#define LOG_SD_CLOSE()
-#define LOG_ATTACH_SERIAL(s)
-#define LOG_ATTACH_SD(s, p, b, ...)
-```
-
-These macros can be used in standard C++ apps.
-
-
-### Log Level
-
-```C++
-enum class LogLevel {
-    NONE     = 0,
-    ERRORS   = 1,
-    WARNINGS = 2,
-    VERBOSE  = 3
-};
-```
-
-
-### Log Base
-
-```C++
-enum class LogBase {
-    DEC = 10,
-    HEX = 16,
-    OCT = 8,
-    BIN = 2,  // only for Arduino
-};
-```
-
-### Save Log to SD Card
+## Save Log to SD Card
 
 ```C++
 // if you want to use standard SD library
 #include <SD.h>
+#define fs SD
 
 // if you want to use SdFat
 // #include <SdFat.h>
-// SdFat SD;
-// SdFatSdio SD;
+// SdFat fs;
+// SdFatSdio fs;
+
+// If you want use SPIFFS (ESP32) or other FileSystems
+// #include <SPIFFS.h>
+// #define fs SPIFFS
 
 // after that, include DebugLog.h
 #include <DebugLog.h>
 
 void setup() {
-  if (SD.begin()) {
-    String filename = "test.txt";
-    LOG_ATTACH_SD(SD, filename, false, true);
-    // 3rd arg => true: auto save every logging, false: manually save
-    // 4th arg => true: only log to SD, false: also print via Serial
-  }
+    if (fs.begin()) {
+      String filename = "test.txt";
+      LOG_ATTACH_SD(fs, filename, false, true);
+      // 3rd arg => true: auto save every logging, false: manually save
+      // 4th arg => true: only log to SD, false: also print via Serial
+    }
 
-  // if 3rd arg is true, logs will be automatically saved to SD
-  LOG_ERROR("error!");
+    // Apart from the log level to be displayed,
+    // you can set the log level to be saved to a file (Default is LogLevel::INFO)
+    LOG_SET_SAVE_LEVEL(DebugLogLevel::ERROR);
 
-  // if 3rd arg is false, you should manually save logs
-  // however this is much faster than auto save (saving takes few milliseconds)
-  LOG_SD_FLUSH(); // manually save to SD card and continue logging
-  // DebugLog::close(); // flush() and finish logging (ASSERT won't be saved to SD)
+    // if 3rd arg is true, logs will be automatically saved to SD
+    LOG_ERROR("error!");
+
+    // if 3rd arg is false, you should manually save logs
+    // however this is much faster than auto save (saving takes few milliseconds)
+    LOG_FS_FLUSH(); // manually save to SD card and continue logging
+    // LOG_FS_CLOSE(); // flush() and finish logging (ASSERT won't be saved to SD)
 }
 ```
 
-Please see `examples/sdcard` , `examples/sdcard_manual_save` for more details. And please note:
+Please see `examples/log_to_file` , `examples/log_to_file_manual_save` for more details. And please note:
 
-- one log function call can takes 3-20 ms if you log to SD (depending on environment)
-- if you disable auto save, you should call `LOG_SD_FLUSH()` or `LOG_SD_CLOSE()` to save logs
+- one log function call can takes 3-20 ms if you log to file (depending on environment)
+- if you disable auto save, you should call `LOG_FS_FLUSH()` or `LOG_FS_CLOSE()` to save logs
 
-
-### Control Scope
+## Control Log Level Scope
 
 You can control the scope of `DebugLog` by including following header files.
 
@@ -170,9 +122,7 @@ You can control the scope of `DebugLog` by including following header files.
 
 After including `DebugLogEnable.h` or `DebugLogDisable.h`, macros are enabled/disabled.
 Finally you should include `DebugLogRestoreState.h` to restore the previous state.
-Please see practical example  `examples/control_scope` for details.
-
-
+Please see practical example `examples/control_scope` for details.
 
 ```C++
 #define DEBUGLOG_RELEASE_MODE
@@ -189,6 +139,78 @@ Please see practical example  `examples/control_scope` for details.
 // here is release mode (restored)
 ```
 
+## APIs
+
+### Basic Logging Macros
+
+`PRINT` and `PRINTLN` are available in both release and debug mode.
+
+```C++
+#define PRINT(...)
+#define PRINTLN(...)
+```
+
+These logging APIs are enabled only in debug mode.
+
+```C++
+#define LOG_ERROR(...)
+#define LOG_WARN(...)
+#define LOG_INFO(...)
+#define LOG_DEBUG(...)
+#define LOG_TRACE(...)
+#define ASSERT(b)
+```
+
+### Logging to File
+
+```C++
+// Arduino Only (Manual operation)
+#define LOG_FS_FLUSH()
+#define LOG_FS_CLOSE()
+```
+
+### Log Option
+
+```C++
+#define LOG_AS_ARR(arr, size)
+#define LOG_GET_LEVEL()
+#define LOG_SET_LEVEL(level)
+#define LOG_SET_OPTION(file, line, func)
+#define LOG_SET_DELIMITER(delim)
+#define LOG_SET_BASE_RESET(b)
+// Arduino Only
+#define LOG_GET_SAVE_LEVEL() DebugLog::Manager::get().saveLevel()
+#define LOG_SET_SAVE_LEVEL(l) DebugLog::Manager::get().saveLevel(l)
+#define LOG_ATTACH_SERIAL(s)
+#define LOG_ATTACH_FS(fs, path, auto_save, only_sd)
+```
+
+## Option Definitions
+
+### Log Level
+
+```C++
+enum class DebugLogLevel {
+    NONE  = 0,
+    ERROR = 1,
+    WARN  = 2,
+    INFO  = 3,
+    DEBUG = 4,
+    TRACE = 5
+};
+```
+
+### Log Base
+
+```C++
+enum class DebugLogBase {
+    DEC = 10,
+    HEX = 16,
+    OCT = 8,
+    BIN = 2,  // only for Arduino
+};
+```
+
 ## Used Inside of
 
 - [ArduinoOSC](https://github.com/hideakitai/ArduinoOSC)
@@ -196,8 +218,6 @@ Please see practical example  `examples/control_scope` for details.
 - [ES920](https://github.com/hideakitai/ES920)
 - [Sony9PinRemote](https://github.com/hideakitai/Sony9PinRemote)
 
-
 ## License
 
 MIT
-
