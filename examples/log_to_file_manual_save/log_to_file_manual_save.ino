@@ -99,7 +99,7 @@ void setup() {
 
     // Log array
     float arr[3] {1.1, 2.2, 3.3};
-    PRINTLN("Array can be also printed like this", DebugLog::to_arr(arr, 3));
+    PRINTLN("Array can be also printed like this", LOG_AS_ARR(arr, 3));
 
 #if ARX_HAVE_LIBSTDCPLUSPLUS >= 201103L  // Have libstdc++11
     // Log containers

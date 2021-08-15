@@ -22,6 +22,7 @@ using DebugLogBase = arx::debug::LogBase;
 // PRINT and PRINTLN are always enabled regardless of debug mode or release mode
 #define PRINT(...) DebugLog::Manager::get().print(__VA_ARGS__)
 #define PRINTLN(...) DebugLog::Manager::get().println(__VA_ARGS__)
+#define LOG_AS_ARR(arr, sz) DebugLog::to_arr(arr, sz)
 #define LOG_GET_LEVEL() DebugLog::Manager::get().logLevel()
 #define LOG_SET_LEVEL(l) DebugLog::Manager::get().logLevel(l)
 #define LOG_SET_OPTION(file, line, func) DebugLog::Manager::get().option(file, line, func)
