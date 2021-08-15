@@ -69,7 +69,13 @@ void setup() {
         LOG_ATTACH_FS(fs, filename, true, false);
     } else {
         PRINTLN("sd initialization failed!");
+        while (true)
+            ;
     }
+
+    // Apart from the log level to be displayed,
+    // you can set the log level to be saved to a file (Default is LogLevel::INFO)
+    LOG_SET_SAVE_LEVEL(DebugLogLevel::ERROR);
 
     // ===== Following process is the same as basic.ino =====
 
