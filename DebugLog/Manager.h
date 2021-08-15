@@ -112,9 +112,13 @@ namespace debug {
         void assertion(bool b, const char* file, int line, const char* func, const char* expr) {
             while (!b) {
                 string_t str = string_t("[ASSERT] ") + file + string_t(" ") + line + string_t(" ") + func + string_t(" : ") + expr;
-                println(str);
-                if (logger) logger->flush();
-                delay(1000);
+                if (!b_only_sd)
+                    stream->println(str);
+                if (logger) {
+                    logger->println(str);
+                    logger->flush();
+                }
+                delay(5000);
             }
         }
 #endif
