@@ -5,7 +5,7 @@
 #include <Arduino.h>
 #include <DebugLog.h>
 
-// you can control the scope depending on your own flag
+// You can control the scope depending on your own flag
 #ifdef MYCLASS_ENABLE_DEBUGLOG
 #include <DebugLogEnable.h>
 #else
@@ -15,17 +15,18 @@
 class MyClass {
 public:
     MyClass() {
-        LOG_VERBOSE("MyClass created");
+        LOG_INFO("MyClass created");
     }
     ~MyClass() {
-        LOG_VERBOSE("MyClass destroyed");
+        LOG_INFO("MyClass destroyed");
     }
     void hello() {
-        LOG_VERBOSE("hello", "world");
+        // This is always visible
+        PRINTLN("hello", "world");
     }
 };
 
-// finally you need to restore default DebugLog status (release or debug)
+// Finally you need to restore default DebugLog status (release or debug)
 #include "DebugLogRestoreState.h"
 
 #endif  // MYCLASS_H

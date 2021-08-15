@@ -5,11 +5,73 @@
 // You can also set default log level by defining macro
 // #define DEBUGLOG_DEFAULT_LOGLEVEL LogLevel::WARN
 
+// if you want to use standard SD library
+#include <SD.h>
+#define fs SD
+
+// If you want to use SdFat
+// #include <SdFat.h>
+// SdFat fs;
+// SdFatSdio fs;
+
+// If you want use SPIFFS (ESP32) or other FileSystems
+// #include <SPIFFS.h>
+// #define fs SPIFFS
+// #include <LittleFS.h>
+// TODO:
+// #include <FatFs.h>
+// TODO:
+
 #include <DebugLog.h>
+
+void shorten(String& s) {
+    for (size_t i = 0; i < s.length(); ++i) {
+        if (s[i] == ':')
+            s.setCharAt(i, '_');
+    }
+}
+
+void print_all_files() {
+    File root = fs.open("/");
+    while (true) {
+        File entry = root.openNextFile();
+        if (!entry) {
+            LOG_INFO("All files read");
+            break;
+        }
+        LOG_INFO("=====", entry.name(), "=====");
+        if (entry.isDirectory()) {
+            ;  // ignore directory
+        } else {
+            while (entry.available()) {
+                PRINT((char)entry.read());
+            }
+            PRINTLN();
+        }
+        entry.close();
+    }
+}
 
 void setup() {
     Serial.begin(115200);
     delay(2000);
+
+    if (fs.begin()) {
+        PRINTLN("FileSystem initialization success");
+
+        print_all_files();
+
+        String filename = "/" + String(__TIME__) + ".txt";
+        shorten(filename);
+
+        // 3rd arg: true: auto save every logging, false: manually save
+        // 4th arg: true: only log to SD, false: also print via Serial
+        LOG_ATTACH_FS(fs, filename, true, false);
+    } else {
+        PRINTLN("sd initialization failed!");
+    }
+
+    // ===== Following process is the same as basic.ino =====
 
     // PRINT and PRINTLN is not affected by log_level (always visible)
     PRINT("DebugLog", "can print variable args: ");

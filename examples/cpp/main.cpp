@@ -1,53 +1,44 @@
-//#define DEBUGLOG_RELEASE_MODE
+// Uncommenting DEBUGLOG_RELEASE_MODE disables ASSERT and all log (Release Mode)
+// PRINT and PRINTLN are always valid even in Release Mode
+// #define DEBUGLOG_RELEASE_MODE
+
+// You can also set default log level by defining macro
+// #define DEBUGLOG_DEFAULT_LOGLEVEL LogLevel::WARN
 
 #include "../../DebugLog.h"
 
 int main() {
-    PRINT("this is for debug", ":");
-    PRINTLN(1, 2.2, "you can", "print variable args");
-    PRINTLN("you can print variable args with bases",
-        DebugLogBase::OCT, 85,
-        DebugLogBase::DEC, 85,
-        DebugLogBase::HEX, 85);
+    // PRINT and PRINTLN is not affected by log_level (always visible)
+    PRINT("DebugLog", "can print variable args: ");
+    PRINTLN(1, 2.2, "three", "=> like this");
 
+    // You can change log_leval by following macro
+    // LOG_SET_LEVEL(DebugLogLevel::TRACE);
+
+    // The default log_leval is DebugLogLevel::INFO
+    // 0: NONE, 1: ERROR, 2: WARN, 3: INFO, 4: DEBUG, 5: TRACE
+    // PRINTLN("current log level is", (int)LOG_GET_LEVEL());
+
+    // The default log_leval is DebugLogLevel::INFO
     LOG_ERROR("this is error log");
-    LOG_WARNING("this is warning log");
-    LOG_VERBOSE("this is verbose log");
+    LOG_WARN("this is warn log");
+    LOG_INFO("this is info log");
+    LOG_DEBUG("this is debug log");  // won't be printed
+    LOG_TRACE("this is trace log");  // won't be printed
 
-    LOG_SET_LEVEL(DebugLogLevel::WARNINGS);
-    PRINTLN("change log level to WARNINGS");
+    // Log array
+    float arr[3] {1.1, 2.2, 3.3};
+    PRINTLN("Array can be also printed like this", DebugLog::to_arr(arr, 3));
 
-    LOG_ERROR("this is error log");
-    LOG_WARNING("this is warning log");
-    LOG_VERBOSE("this is verbose log");
+#if ARX_HAVE_LIBSTDCPLUSPLUS >= 201103L  // Have libstdc++11
+    // Log containers
+    std::vector<int> vs {1, 2, 3};
+    std::deque<float> ds {1.1, 2.2, 3.3};
+    std::map<std::string, int> ms {{"one", 1}, {"two", 2}, {"three", 3}};
+    PRINTLN("Containers can also be printed like", vs, ds, ms);
+#endif
 
-    LOG_SET_LEVEL(DebugLogLevel::ERRORS);
-    PRINTLN("change log level to ERRORS");
-
-    LOG_ERROR("this is error log");
-    LOG_WARNING("this is warning log");
-    LOG_VERBOSE("this is verbose log");
-
-    LOG_SET_LEVEL(DebugLogLevel::NONE);
-    PRINTLN("change log level to NONE");
-
-    LOG_ERROR("this is error log");
-    LOG_WARNING("this is warning log");
-    LOG_VERBOSE("this is verbose log");
-
-    LOG_SET_LEVEL(DebugLogLevel::VERBOSE);
-    PRINTLN("change log level to VERBOSE");
-    LOG_SET_OPTION(false, false, false);
-    PRINTLN("disable file, line, and func from output format");
-
-    LOG_ERROR("this is error log");
-    LOG_WARNING("this is warning log");
-    LOG_VERBOSE("this is verbose log");
-
-    LOG_SET_DELIMITER(" and ");
-    PRINTLN("change delimtier from \" \" to \" and \"");
-    LOG_VERBOSE(1, 2, 3, 4, 5);
-
+    // In c++ app, standard assert is used
     int x = 1;
-    ASSERT(x != 1);  // in c++ app, standard assert is used
+    ASSERT(x != 1);
 }
