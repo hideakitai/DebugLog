@@ -11,6 +11,8 @@
 #include <string.h>
 #endif
 
+#include "DebugLog/util/ArxContainer/ArxContainer.h"
+
 #ifdef ARDUINO
 #ifdef DEC
 #undef DEC
@@ -45,6 +47,22 @@ namespace debug {
         template <class T>
         constexpr T&& forward(typename remove_reference<T>::type&& t) noexcept { return static_cast<T&&>(t); }
     }  // namespace detail
+
+#if ARX_HAVE_LIBSTDCPLUSPLUS >= 201103L  // Have libstdc++11
+    template <typename T>
+    using vec_t = std::vector<T>;
+    template <typename T>
+    using deq_t = std::deque<T>;
+    template <typename K, typename V>
+    using map_t = std::map<K, V>;
+#else   // Do not have libstdc++11
+    template <typename T, size_t N>
+    using vec_t = arx::vector<T, N>;
+    template <typename T, size_t N>
+    using deq_t = arx::deque<T, N>;
+    template <typename K, typename V, size_t N>
+    using map_t = arx::map<K, V, N>;
+#endif  // Do not have libstdc++11
 
 // serial loggers
 #ifdef ARDUINO
@@ -153,6 +171,24 @@ namespace debug {
 #endif
     };
 
+    template <typename T>
+    struct Array {
+        T* ptr;
+        size_t sz;
+
+    public:
+        Array(T* ptr, const size_t sz)
+        : ptr(ptr), sz(sz) {}
+
+        const T& operator[](const size_t i) const { return ptr[i]; }
+        size_t size() const { return sz; }
+    };
+
+    template <typename T>
+    inline Array<T> to_arr(T* ptr, const size_t sz) {
+        return Array<T>(ptr, sz);
+    }
+
 #ifndef DEBUGLOG_DEFAULT_LOGLEVEL
 #define DEBUGLOG_DEFAULT_LOGLEVEL LogLevel::INFO
 #endif
@@ -226,7 +262,7 @@ namespace debug {
 
         template <typename Head, typename... Tail>
         void print(Head&& head, Tail&&... tail) {
-            print_impl(head, sizeof...(tail));
+            print_impl(head, (sizeof...(tail) == 0));
 #ifdef ARDUINO
             print(detail::forward<Tail>(tail)...);
 #else
@@ -251,7 +287,7 @@ namespace debug {
 
         template <typename Head, typename... Tail>
         void println(Head&& head, Tail&&... tail) {
-            print_impl(head, sizeof...(tail));
+            print_impl(head, (sizeof...(tail) == 0));
 #ifdef ARDUINO
             println(detail::forward<Tail>(tail)...);
 #else
@@ -350,27 +386,91 @@ namespace debug {
 
     private:
         template <typename Head>
-        void print_impl(Head&& head, const size_t size) {
+        void print_impl(Head&& head, const bool b_last_idx) {
 #ifdef ARDUINO
             if (!b_only_sd) {
                 print_exec(head, stream);
-                if (size != 0)
+                if (!b_last_idx)
                     stream->print(delim);
             }
             if (logger && ((int)curr_level <= (int)save_level)) {
                 print_exec(head, logger);
-                if (size != 0)
+                if (!b_last_idx)
                     logger->print(delim);
             }
 #else
             print_exec(head);
-            if (size != 0)
+            if (!b_last_idx)
                 std::cout << delim;
 #endif
         }
 
-        void print_impl(LogBase& head, const size_t) {
+        template <typename T>
+        void print_impl(Array<T>& head, const bool b_last_idx) {
+            print_array(head, b_last_idx);
+        }
+
+#if ARX_HAVE_LIBSTDCPLUSPLUS >= 201103L  // Have libstdc++11
+
+        template <typename T>
+        void print_impl(vec_t<T>& head, const bool b_last_idx) {
+            print_array(head, b_last_idx);
+        }
+
+        template <typename T>
+        void print_impl(deq_t<T>& head, const bool b_last_idx) {
+            print_array(head, b_last_idx);
+        }
+
+        template <typename K, typename V>
+        void print_impl(map_t<K, V>& head, const bool b_last_idx) {
+            print_impl("{", false);
+            for (const auto& kv : head) {
+                print_impl(kv.first, false);
+                print_impl(":", false);
+                print_impl(kv.second, false);
+                print_impl(",", false);
+            }
+            print_impl("}", b_last_idx);
+        }
+
+#else  // Do not have libstdc++11
+
+        template <typename T, size_t N>
+        void print_impl(vec_t<T, N>& head, const bool b_last_idx) {
+            print_array(head, b_last_idx);
+        }
+
+        template <typename T, size_t N>
+        void print_impl(deq_t<T, N>& head, const bool b_last_idx) {
+            print_array(head, b_last_idx);
+        }
+
+        template <typename K, typename V, size_t N>
+        void print_impl(map_t<K, V, N>& head, const bool b_last_idx) {
+            print_impl("{", false);
+            for (const auto& kv : head) {
+                print_impl(kv.first, false);
+                print_impl(":", false);
+                print_impl(kv.second, false);
+                print_impl(",", false);
+            }
+            print_impl("}", b_last_idx);
+        }
+
+#endif  // Do not have libstdc++11
+
+        void print_impl(LogBase& head, const bool) {
             log_base = head;
+        }
+
+        template <typename T>
+        void print_array(T& arr, const bool b_last_idx) {
+            print_impl("[", false);
+            for (size_t i = 0; i < arr.size(); ++i) {
+                print_impl(arr[i], false);
+            }
+            print_impl("]", b_last_idx);
         }
 
 #ifdef ARDUINO
