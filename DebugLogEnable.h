@@ -4,8 +4,8 @@
 #undef LOG_DEBUG
 #undef LOG_TRACE
 #ifdef ARDUINO
-#undef LOG_SD_FLUSH
-#undef LOG_SD_CLOSE
+#undef LOG_FS_FLUSH
+#undef LOG_FS_CLOSE
 #endif
 #undef ASSERT
 
@@ -18,8 +18,8 @@
 #define LOG_TRACE(...) DebugLog::Manager::get().log(arx::debug::LogLevel::TRACE, __FILENAME__, __LINE__, __func__, __VA_ARGS__)
 
 #ifdef ARDUINO
-#define LOG_SD_FLUSH() DebugLog::Manager::get().flush()
-#define LOG_SD_CLOSE() DebugLog::Manager::get().close()
+#define LOG_FS_FLUSH() DebugLog::Manager::get().flush()
+#define LOG_FS_CLOSE() DebugLog::Manager::get().close()
 #define ASSERT(b) DebugLog::Manager::get().assertion((b), __FILENAME__, __LINE__, __func__, #b)
 #else  // ARDUINO
 #include <cassert>

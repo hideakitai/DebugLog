@@ -4,8 +4,8 @@
 #undef LOG_DEBUG
 #undef LOG_TRACE
 #ifdef ARDUINO
-#undef LOG_SD_FLUSH
-#undef LOG_SD_CLOSE
+#undef LOG_FS_FLUSH
+#undef LOG_FS_CLOSE
 #endif
 #undef ASSERT
 
@@ -15,7 +15,7 @@
 #define LOG_DEBUG(...) ((void)0)
 #define LOG_TRACE(...) ((void)0)
 #ifdef ARDUINO
-#define LOG_SD_FLUSH() ((void)0)
-#define LOG_SD_CLOSE() ((void)0)
+#define LOG_FS_FLUSH() ((void)0)
+#define LOG_FS_CLOSE() ((void)0)
 #endif
 #define ASSERT(b) ((void)0)

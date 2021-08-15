@@ -111,8 +111,8 @@ void setup() {
 
     // ===== End of the process same as the basic.ino =====
 
-    LOG_SD_FLUSH();  // save to SD card and continue logging
-    // LOG_SD_CLOSE(); // flush() and finish logging (ASSERT won't be saved to SD)
+    LOG_FS_FLUSH();  // save to SD card and continue logging
+    // LOG_FS_CLOSE(); // flush() and finish logging (ASSERT won't be saved to SD)
 
     delay(1000);
 
