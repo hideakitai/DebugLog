@@ -114,7 +114,9 @@ void setup() {
     // You can also use assert
     // If assertion failed, Serial endlessly prints message
     int x = 1;
-    ASSERT(x != 1);
+    // ASSERT(x != 1);
+    // You can also use assert with messages by ASSERTM macro
+    ASSERTM(x != 1, "This always fails");
 }
 
 void loop() {

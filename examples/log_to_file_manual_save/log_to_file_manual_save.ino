@@ -119,7 +119,9 @@ void setup() {
     // assertions are automatically saved if DebugLog is not closed
     // if DebugLog is closed, assertions won't be saved to SD
     int x = 1;
-    ASSERT(x != 1);  // if assertion failed, Serial endlessly prints message
+    // ASSERT(x != 1);
+    // You can also use assert with messages by ASSERTM macro
+    ASSERTM(x != 1, "This always fails");
 }
 
 void loop() {

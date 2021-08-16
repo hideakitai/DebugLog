@@ -40,5 +40,7 @@ int main() {
 
     // In c++ app, standard assert is used
     int x = 1;
-    ASSERT(x != 1);
+    // ASSERT(x != 1);
+    // You can also use assert with messages by ASSERTM macro
+    ASSERTM(x != 1, "This always fails");
 }
