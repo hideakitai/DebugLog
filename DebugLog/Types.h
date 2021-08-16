@@ -99,8 +99,11 @@ namespace debug {
 }  // namespace debug
 }  // namespace arx
 
-#ifndef DEBUGLOG_DEFAULT_LOGLEVEL
-#define DEBUGLOG_DEFAULT_LOGLEVEL LogLevel::INFO
+#ifndef DEBUGLOG_DEFAULT_LOG_LEVEL
+#define DEBUGLOG_DEFAULT_LOG_LEVEL LogLevel::INFO
+#endif
+#ifndef DEBUGLOG_DEFAULT_FILE_LEVEL
+#define DEBUGLOG_DEFAULT_FILE_LEVEL LogLevel::ERROR
 #endif
 
 #endif  // DEBUGLOG_TYPES_H

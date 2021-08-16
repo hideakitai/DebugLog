@@ -8,8 +8,8 @@ namespace arx {
 namespace debug {
 
     class Manager {
-        LogLevel log_level {DEBUGLOG_DEFAULT_LOGLEVEL};
-        LogLevel curr_level {DEBUGLOG_DEFAULT_LOGLEVEL};
+        LogLevel log_level {DEBUGLOG_DEFAULT_LOG_LEVEL};
+        LogLevel curr_level {DEBUGLOG_DEFAULT_LOG_LEVEL};
         LogBase log_base {LogBase::DEC};
         string_t delim {" "};
         bool b_file {true};
@@ -20,7 +20,7 @@ namespace debug {
 #ifdef ARDUINO
         Stream* stream {&Serial};
         FileLogger* logger {nullptr};
-        LogLevel save_level {DEBUGLOG_DEFAULT_LOGLEVEL};
+        LogLevel save_level {DEBUGLOG_DEFAULT_FILE_LEVEL};
         bool b_auto_save {false};
         bool b_only_fs {false};
 #endif
