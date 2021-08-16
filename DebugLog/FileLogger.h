@@ -50,6 +50,7 @@ namespace debug {
         FsFileLogger(FsType& fsclass, const String& path, const FileMode& mode)
         : fs(&fsclass), path(path) {
             file = fs->open(path.c_str(), mode);
+            file.seek(EOF);
         }
 
         virtual ~FsFileLogger() {
