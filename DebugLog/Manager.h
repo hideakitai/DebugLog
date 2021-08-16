@@ -22,7 +22,7 @@ namespace debug {
         FileLogger* logger {nullptr};
         LogLevel save_level {DEBUGLOG_DEFAULT_LOGLEVEL};
         bool b_auto_save {false};
-        bool b_only_sd {false};
+        bool b_only_fs {false};
 #endif
 
         // singleton
@@ -60,7 +60,7 @@ namespace debug {
             close();
             logger = new FsFileLogger<FsType, File>(s, path);
             b_auto_save = auto_save;
-            b_only_sd = only_sd;
+            b_only_fs = only_fs;
         }
 #endif
 
@@ -85,7 +85,7 @@ namespace debug {
 
         void println() {
 #ifdef ARDUINO
-            if (!b_only_sd) {
+            if (!b_only_fs) {
                 stream->println();
             }
             if (logger) {
@@ -113,7 +113,7 @@ namespace debug {
             while (!b) {
                 string_t str = string_t("[ASSERT] ") + file + string_t(" ") + line + string_t(" ") + func + string_t(" : ") + expr;
                 if (msg.length()) str += string_t(" => ") + msg;
-                if (!b_only_sd)
+                if (!b_only_fs)
                     stream->println(str);
                 if (logger) {
                     logger->println(str);
@@ -184,7 +184,7 @@ namespace debug {
         template <typename Head>
         void print_impl(Head&& head, const bool b_last_idx) {
 #ifdef ARDUINO
-            if (!b_only_sd) {
+            if (!b_only_fs) {
                 print_exec(head, stream);
                 if (!b_last_idx)
                     stream->print(delim);
