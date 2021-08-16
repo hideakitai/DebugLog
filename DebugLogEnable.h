@@ -21,7 +21,9 @@
 #define LOG_FS_FLUSH() DebugLog::Manager::get().flush()
 #define LOG_FS_CLOSE() DebugLog::Manager::get().close()
 #define ASSERT(b) DebugLog::Manager::get().assertion((b), __FILENAME__, __LINE__, __func__, #b)
+#define ASSERTM(b, msg) DebugLog::Manager::get().assertion((b), __FILENAME__, __LINE__, __func__, #b, msg)
 #else  // ARDUINO
 #include <cassert>
 #define ASSERT(b) assert(b)
+#define ASSERTM(b, msg) assert((msg, b))
 #endif  // ARDUINO

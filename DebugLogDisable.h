@@ -18,4 +18,5 @@
 #define LOG_FS_FLUSH() ((void)0)
 #define LOG_FS_CLOSE() ((void)0)
 #endif
-#define ASSERT(b) ((void)0)
+#define ASSERT(...) ((void)0)
+#define ASSERTM(...) ((void)0)
