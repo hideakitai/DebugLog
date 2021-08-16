@@ -113,8 +113,7 @@ namespace debug {
             if (!b) {
                 string_t str = string_t("[ASSERT] ") + file + string_t(" ") + line + string_t(" ") + func + string_t(" : ") + expr;
                 if (msg.length()) str += string_t(" => ") + msg;
-                if (!b_only_fs)
-                    stream->println(str);
+                stream->println(str);
                 if (logger) {
                     logger->println(str);
                     logger->flush();
