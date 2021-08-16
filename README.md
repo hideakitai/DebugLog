@@ -62,7 +62,9 @@ void setup() {
     // You can also use assert
     // If assertion failed, Serial endlessly prints message
     int x = 1;
-    ASSERT(x != 1);
+    // ASSERT(x != 1);
+    // You can also use assert with messages by ASSERTM macro
+    ASSERTM(x != 1, "This always fails");
 }
 ```
 
@@ -159,6 +161,7 @@ These logging APIs are enabled only in debug mode.
 #define LOG_DEBUG(...)
 #define LOG_TRACE(...)
 #define ASSERT(b)
+#define ASSERTM(b, msg)
 ```
 
 ### Logging to File
