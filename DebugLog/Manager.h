@@ -110,7 +110,7 @@ namespace debug {
 
 #ifdef ARDUINO
         void assertion(bool b, const char* file, int line, const char* func, const char* expr, const String& msg = "") {
-            while (!b) {
+            if (!b) {
                 string_t str = string_t("[ASSERT] ") + file + string_t(" ") + line + string_t(" ") + func + string_t(" : ") + expr;
                 if (msg.length()) str += string_t(" => ") + msg;
                 if (!b_only_fs)
@@ -119,7 +119,8 @@ namespace debug {
                     logger->println(str);
                     logger->flush();
                 }
-                delay(5000);
+                while (true)
+                    ;
             }
         }
 #endif
