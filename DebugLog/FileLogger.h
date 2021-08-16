@@ -46,13 +46,10 @@ namespace debug {
         FileType file;
 
     public:
-        FsFileLogger(FsType& fsclass, const String& path)
+        template <typename FileMode>
+        FsFileLogger(FsType& fsclass, const String& path, const FileMode& mode)
         : fs(&fsclass), path(path) {
-#ifdef O_WRITE
-            file = fs->open(path.c_str(), O_WRITE | O_CREAT);
-#elif defined(FILE_WRITE)
-            file = fs->open(path.c_str(), FILE_WRITE);
-#endif
+            file = fs->open(path.c_str(), mode);
         }
 
         virtual ~FsFileLogger() {

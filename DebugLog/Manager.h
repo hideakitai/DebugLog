@@ -55,10 +55,10 @@ namespace debug {
         }
 
 #ifdef FILE_WRITE
-        template <typename FsType>
-        void attach(FsType& s, const String& path, bool auto_save, bool only_sd = false) {
+        template <typename FsType, typename FileMode>
+        void attach(FsType& s, const String& path, const FileMode& mode, const bool auto_save, const bool only_fs) {
             close();
-            logger = new FsFileLogger<FsType, File>(s, path);
+            logger = new FsFileLogger<FsType, File>(s, path, mode);
             b_auto_save = auto_save;
             b_only_fs = only_fs;
         }

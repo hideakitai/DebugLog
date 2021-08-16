@@ -32,7 +32,8 @@ using DebugLogBase = arx::debug::LogBase;
 #define LOG_GET_SAVE_LEVEL() DebugLog::Manager::get().saveLevel()
 #define LOG_SET_SAVE_LEVEL(l) DebugLog::Manager::get().saveLevel(l)
 #define LOG_ATTACH_SERIAL(s) DebugLog::Manager::get().attach(s)
-#define LOG_ATTACH_FS(s, p, b, ...) DebugLog::Manager::get().attach(s, p, b, __VA_ARGS__)
+#define LOG_ATTACH_FS(fs, path, mode, save) DebugLog::Manager::get().attach(fs, path, mode, save, false)
+#define LOG_ATTACH_FS_BG(fs, path, mode, save) DebugLog::Manager::get().attach(fs, path, mode, save, true)
 #endif  // ARDUINO
 
 #include "DebugLogRestoreState.h"
