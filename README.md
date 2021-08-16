@@ -5,7 +5,7 @@ Serial based assertion and log library for Arduino
 ## Feature
 
 - Printing variadic arguments in one line
-- Release mode : `#define DEBUGLOG_RELEASE_MODE` can disables debug info (`LOG_XXXX`)
+- Release mode : `#define DEBUGLOG_DISABLE_MACRO` can disables debug info (`LOG_XXXX`)
 - Log level control (`ERROR`, `WARN`, `INFO`, `DEBUG`, `TRACE`)
 - Automatically or manually saving log to file
 - Multiple file system support (`SdFat`, `SPIFFS`, etc.)
@@ -14,9 +14,9 @@ Serial based assertion and log library for Arduino
 ## Basic Usage
 
 ```C++
-// Uncommenting DEBUGLOG_RELEASE_MODE disables ASSERT and all log (Release Mode)
+// Uncommenting DEBUGLOG_DISABLE_MACRO disables ASSERT and all log (Release Mode)
 // PRINT and PRINTLN are always valid even in Release Mode
-// #define DEBUGLOG_RELEASE_MODE
+// #define DEBUGLOG_DISABLE_MACRO
 
 // You can also set default log level by defining macro
 // #define DEBUGLOG_DEFAULT_LOGLEVEL LogLevel::WARN
@@ -127,7 +127,7 @@ Finally you should include `DebugLogRestoreState.h` to restore the previous stat
 Please see practical example `examples/control_scope` for details.
 
 ```C++
-#define DEBUGLOG_RELEASE_MODE
+#define DEBUGLOG_DISABLE_MACRO
 #include <DebugLog.h>
 
 // here is release mode (disable DebugLog)
