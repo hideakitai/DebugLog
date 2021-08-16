@@ -8,8 +8,8 @@ namespace arx {
 namespace debug {
 
     class Manager {
-        LogLevel log_level {DEBUGLOG_DEFAULT_LOG_LEVEL};
-        LogLevel curr_level {DEBUGLOG_DEFAULT_LOG_LEVEL};
+        LogLevel log_lvl {DEBUGLOG_DEFAULT_LOG_LEVEL};
+        LogLevel curr_lvl {DEBUGLOG_DEFAULT_LOG_LEVEL};
         LogBase log_base {LogBase::DEC};
         string_t delim {" "};
         bool b_file {true};
@@ -20,7 +20,7 @@ namespace debug {
 #ifdef ARDUINO
         Stream* stream {&Serial};
         FileLogger* logger {nullptr};
-        LogLevel save_level {DEBUGLOG_DEFAULT_FILE_LEVEL};
+        LogLevel file_lvl {DEBUGLOG_DEFAULT_FILE_LEVEL};
         bool b_auto_save {false};
         bool b_only_fs {false};
 #endif
@@ -125,19 +125,19 @@ namespace debug {
         }
 #endif
 
-        void logLevel(const LogLevel l) { log_level = l; }
-        LogLevel logLevel() const { return log_level; }
+        void log_level(const LogLevel l) { log_lvl = l; }
+        LogLevel log_level() const { return log_lvl; }
 
 #ifdef ARDUINO
-        void saveLevel(const LogLevel l) { save_level = l; }
-        LogLevel saveLevel() const { return save_level; }
+        void file_level(const LogLevel l) { file_lvl = l; }
+        LogLevel file_level() const { return file_lvl; }
 #endif
 
         template <typename... Args>
         void log(LogLevel level, const char* file, int line, const char* func, Args&&... args) {
-            curr_level = level;
-            if ((log_level == LogLevel::NONE) || (curr_level == LogLevel::NONE)) return;
-            if ((int)curr_level <= (int)log_level) {
+            curr_lvl = level;
+            if ((log_lvl == LogLevel::NONE) || (curr_lvl == LogLevel::NONE)) return;
+            if ((int)curr_lvl <= (int)log_lvl) {
                 string_t header = get_log_level_header();
 #ifdef ARDUINO
                 if (b_file) header += file + string_t(" ");
@@ -190,7 +190,7 @@ namespace debug {
                 if (!b_last_idx)
                     stream->print(delim);
             }
-            if (logger && ((int)curr_level <= (int)save_level)) {
+            if (logger && ((int)curr_lvl <= (int)file_lvl)) {
                 print_exec(head, logger);
                 if (!b_last_idx)
                     logger->print(delim);
@@ -303,7 +303,7 @@ namespace debug {
 
         string_t get_log_level_header() const {
             string_t lvl_str;
-            switch (curr_level) {
+            switch (curr_lvl) {
                 case LogLevel::ERROR:
                     lvl_str = "[ERROR] ";
                     break;
