@@ -31,19 +31,64 @@ namespace debug {
         Manager& operator=(const Manager&) = delete;
 
     public:
-        ~Manager() {
-#ifdef ARDUINO
-            if (logger) delete logger;
-#endif
-        }
-
         static Manager& get() {
             static Manager m;
             return m;
         }
 
+        LogLevel log_level() const {
+            return log_lvl;
+        }
+
+        void log_level(const LogLevel l) {
+            log_lvl = l;
+        }
+
+        void option(const bool en_file, const bool en_line, const bool en_func) {
+            b_file = en_file;
+            b_line = en_line;
+            b_func = en_func;
+        }
+
+        void delimiter(const string_t& del) {
+            delim = del;
+        }
+
+        void base_reset(const bool b) {
+            b_base_reset = b;
+        }
+
 #ifdef ARDUINO
-        void attach(Stream& s) { stream = &s; }
+
+        ~Manager() {
+            if (logger) delete logger;
+        }
+
+        void attach(Stream& s) {
+            stream = &s;
+        }
+
+        template <typename FsType, typename FileMode>
+        void attach(FsType& s, const String& path, const FileMode& mode, const bool auto_save, const bool only_fs) {
+            close();
+            logger = new FsFileLogger<FsType, File>(s, path, mode);
+            b_auto_save = auto_save;
+            b_only_fs = only_fs;
+        }
+
+        void assertion(bool b, const char* file, int line, const char* func, const char* expr, const String& msg = "") {
+            if (!b) {
+                string_t str = string_t("[ASSERT] ") + file + string_t(" ") + line + string_t(" ") + func + string_t(" : ") + expr;
+                if (msg.length()) str += string_t(" => ") + msg;
+                stream->println(str);
+                if (logger) {
+                    logger->println(str);
+                    logger->flush();
+                }
+                while (true)
+                    ;
+            }
+        }
 
         void flush() {
             if (logger) logger->flush();
@@ -54,17 +99,49 @@ namespace debug {
             if (logger) delete logger;
         }
 
-#ifdef FILE_WRITE
-        template <typename FsType, typename FileMode>
-        void attach(FsType& s, const String& path, const FileMode& mode, const bool auto_save, const bool only_fs) {
-            close();
-            logger = new FsFileLogger<FsType, File>(s, path, mode);
-            b_auto_save = auto_save;
-            b_only_fs = only_fs;
+        LogLevel file_level() const {
+            return file_lvl;
         }
-#endif
+
+        void file_level(const LogLevel l) {
+            file_lvl = l;
+        }
 
 #endif  // ARDUINO
+
+        template <typename... Args>
+        void log(LogLevel level, const char* file, int line, const char* func, Args&&... args) {
+            curr_lvl = level;
+            if ((log_lvl == LogLevel::NONE) || (curr_lvl == LogLevel::NONE)) return;
+            if ((int)curr_lvl <= (int)log_lvl) {
+                string_t header = get_log_level_header();
+#ifdef ARDUINO
+                if (b_file) header += file + string_t(" ");
+                if (b_line) header += string_t("L.") + line + string_t(" ");
+                if (b_func) header += func + string_t(" ");
+                header += string_t(": ");
+                print(header);
+                println(detail::forward<Args>(args)...);
+#else
+                if (b_file) {
+                    header += file;
+                    header += " ";
+                };
+                if (b_line) {
+                    header += "L.";
+                    header += std::to_string(line);
+                    header += " ";
+                }
+                if (b_func) {
+                    header += func;
+                    header += " ";
+                };
+                header += ": ";
+                print(header);
+                println(std::forward<Args>(args)...);
+#endif
+            }
+        }
 
         void print() {
 #ifdef ARDUINO
@@ -106,78 +183,6 @@ namespace debug {
 #else
             println(std::forward<Tail>(tail)...);
 #endif
-        }
-
-#ifdef ARDUINO
-        void assertion(bool b, const char* file, int line, const char* func, const char* expr, const String& msg = "") {
-            if (!b) {
-                string_t str = string_t("[ASSERT] ") + file + string_t(" ") + line + string_t(" ") + func + string_t(" : ") + expr;
-                if (msg.length()) str += string_t(" => ") + msg;
-                stream->println(str);
-                if (logger) {
-                    logger->println(str);
-                    logger->flush();
-                }
-                while (true)
-                    ;
-            }
-        }
-#endif
-
-        void log_level(const LogLevel l) { log_lvl = l; }
-        LogLevel log_level() const { return log_lvl; }
-
-#ifdef ARDUINO
-        void file_level(const LogLevel l) { file_lvl = l; }
-        LogLevel file_level() const { return file_lvl; }
-#endif
-
-        template <typename... Args>
-        void log(LogLevel level, const char* file, int line, const char* func, Args&&... args) {
-            curr_lvl = level;
-            if ((log_lvl == LogLevel::NONE) || (curr_lvl == LogLevel::NONE)) return;
-            if ((int)curr_lvl <= (int)log_lvl) {
-                string_t header = get_log_level_header();
-#ifdef ARDUINO
-                if (b_file) header += file + string_t(" ");
-                if (b_line) header += string_t("L.") + line + string_t(" ");
-                if (b_func) header += func + string_t(" ");
-                header += string_t(": ");
-                print(header);
-                println(detail::forward<Args>(args)...);
-#else
-                if (b_file) {
-                    header += file;
-                    header += " ";
-                };
-                if (b_line) {
-                    header += "L.";
-                    header += std::to_string(line);
-                    header += " ";
-                }
-                if (b_func) {
-                    header += func;
-                    header += " ";
-                };
-                header += ": ";
-                print(header);
-                println(std::forward<Args>(args)...);
-#endif
-            }
-        }
-
-        void option(const bool en_file, const bool en_line, const bool en_func) {
-            b_file = en_file;
-            b_line = en_line;
-            b_func = en_func;
-        }
-
-        void delimiter(const string_t& del) {
-            delim = del;
-        }
-
-        void base_reset(const bool b) {
-            b_base_reset = b;
         }
 
     private:
