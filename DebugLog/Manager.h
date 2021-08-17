@@ -76,7 +76,7 @@ namespace debug {
         }
 #endif
 
-        void assertion(bool b, const char* file, int line, const char* func, const char* expr, const String& msg = "") {
+        void assertion(const bool b, const char* file, const int line, const char* func, const char* expr, const String& msg = "") {
             if (!b) {
                 string_t str = string_t("[ASSERT] ") + file + string_t(" ") + line + string_t(" ") + func + string_t(" : ") + expr;
                 if (msg.length()) str += string_t(" => ") + msg;
@@ -116,7 +116,7 @@ namespace debug {
 #endif  // ARDUINO
 
         template <typename... Args>
-        void log(LogLevel level, const char* file, int line, const char* func, Args&&... args) {
+        void log(const LogLevel level, const char* file, const int line, const char* func, Args&&... args) {
             bool b_ignore = (log_lvl == LogLevel::NONE);
 #ifdef ARDUINO
             b_ignore &= (file_lvl == LogLevel::NONE);
@@ -145,7 +145,7 @@ namespace debug {
         }
 
         template <typename Head, typename... Tail>
-        void print(Head&& head, Tail&&... tail) {
+        void print(const Head& head, Tail&&... tail) {
 #ifdef ARDUINO
             print_one(head, stream);
             if (sizeof...(tail) != 0)
@@ -168,7 +168,7 @@ namespace debug {
         }
 
         template <typename Head, typename... Tail>
-        void println(Head&& head, Tail&&... tail) {
+        void println(const Head& head, Tail&&... tail) {
 #ifdef ARDUINO
             print_one(head, stream);
             if (sizeof...(tail) != 0)
@@ -189,7 +189,7 @@ namespace debug {
         }
 
         template <typename Head, typename... Tail>
-        void print_file(Head&& head, Tail&&... tail) {
+        void print_file(const Head& head, Tail&&... tail) {
             if (!logger) return;
             print_one(head, logger);
             if (sizeof...(tail) != 0)
@@ -204,7 +204,7 @@ namespace debug {
         }
 
         template <typename Head, typename... Tail>
-        void println_file(Head&& head, Tail&&... tail) {
+        void println_file(const Head& head, Tail&&... tail) {
             print_one(head, logger);
             if (sizeof...(tail) != 0)
                 print_one(delim, logger);
@@ -217,67 +217,67 @@ namespace debug {
 
         // print without base
         template <typename Head, typename S>
-        void print_one(Head&& head, S* s) { s->print(head); }
+        void print_one(const Head& head, S* s) { s->print(head); }
 
         // print with base
         template <typename S>
-        void print_one(signed char head, S* s) { s->print(head, (int)log_base); }
+        void print_one(const signed char head, S* s) { s->print(head, (int)log_base); }
         template <typename S>
-        void print_one(unsigned char head, S* s) { s->print(head, (int)log_base); }
+        void print_one(const unsigned char head, S* s) { s->print(head, (int)log_base); }
         template <typename S>
-        void print_one(short head, S* s) { s->print(head, (int)log_base); }
+        void print_one(const short head, S* s) { s->print(head, (int)log_base); }
         template <typename S>
-        void print_one(unsigned short head, S* s) { s->print(head, (int)log_base); }
+        void print_one(const unsigned short head, S* s) { s->print(head, (int)log_base); }
         template <typename S>
-        void print_one(int head, S* s) { s->print(head, (int)log_base); }
+        void print_one(const int head, S* s) { s->print(head, (int)log_base); }
         template <typename S>
-        void print_one(unsigned int head, S* s) { s->print(head, (int)log_base); }
+        void print_one(const unsigned int head, S* s) { s->print(head, (int)log_base); }
         template <typename S>
-        void print_one(long head, S* s) { s->print(head, (int)log_base); }
+        void print_one(const long head, S* s) { s->print(head, (int)log_base); }
         template <typename S>
-        void print_one(unsigned long head, S* s) { s->print(head, (int)log_base); }
+        void print_one(const unsigned long head, S* s) { s->print(head, (int)log_base); }
 
         template <typename S>
-        void print_one(LogBase& head, S*) {
+        void print_one(const LogBase& head, S*) {
             log_base = head;
         }
 
         template <typename S, typename T>
-        void print_one(Array<T>& head, S* s) {
+        void print_one(const Array<T>& head, S* s) {
             print_array(head, s);
         }
 
 #if ARX_HAVE_LIBSTDCPLUSPLUS >= 201103L  // Have libstdc++11
 
         template <typename S, typename T>
-        void print_one(vec_t<T>& head, S* s) {
+        void print_one(const vec_t<T>& head, S* s) {
             print_array(head, s);
         }
 
         template <typename S, typename T>
-        void print_one(deq_t<T>& head, S* s) {
+        void print_one(const deq_t<T>& head, S* s) {
             print_array(head, s);
         }
 
         template <typename S, typename K, typename V>
-        void print_one(map_t<K, V>& head, S* s) {
+        void print_one(const map_t<K, V>& head, S* s) {
             print_map(head, s);
         }
 
 #else  // Do not have libstdc++11
 
         template <typename S, typename T, size_t N>
-        void print_one(vec_t<T, N>& head, S* s) {
+        void print_one(const vec_t<T, N>& head, S* s) {
             print_array(head, s);
         }
 
         template <typename S, typename T, size_t N>
-        void print_one(deq_t<T, N>& head, S* s) {
+        void print_one(const deq_t<T, N>& head, S* s) {
             print_array(head, s);
         }
 
         template <typename S, typename K, typename V, size_t N>
-        void print_one(map_t<K, V, N>& head, S* s) {
+        void print_one(const map_t<K, V, N>& head, S* s) {
             print_map(head, s);
         }
 
@@ -285,7 +285,7 @@ namespace debug {
 
         // print one helper
         template <typename S, typename T>
-        void print_array(T& head, S* s) {
+        void print_array(const T& head, S* s) {
             print_one("[", s);
             for (size_t i = 0; i < head.size(); ++i) {
                 print_one(head[i], s);
@@ -296,7 +296,7 @@ namespace debug {
         }
 
         template <typename S, typename T>
-        void print_map(T& head, S* s) {
+        void print_map(const T& head, S* s) {
             print_one("{", s);
             const size_t size = head.size();
             size_t i = 0;
@@ -313,7 +313,7 @@ namespace debug {
 #else
 
         template <typename Head>
-        void print_one(Head&& head) {
+        void print_one(const Head& head) {
             switch (log_base) {
                 case LogBase::DEC: std::cout << std::dec; break;
                 case LogBase::HEX: std::cout << std::hex; break;
@@ -323,28 +323,28 @@ namespace debug {
         }
 
         template <typename T>
-        void print_one(Array<T>& head) {
+        void print_one(const Array<T>& head) {
             print_array(head);
         }
 
         template <typename T>
-        void print_one(vec_t<T>& head) {
+        void print_one(const vec_t<T>& head) {
             print_array(head);
         }
 
         template <typename T>
-        void print_one(deq_t<T>& head) {
+        void print_one(const deq_t<T>& head) {
             print_array(head);
         }
 
         template <typename K, typename V>
-        void print_one(map_t<K, V>& head) {
+        void print_one(const map_t<K, V>& head) {
             print_map(head);
         }
 
         // print one helper
         template <typename T>
-        void print_array(T& head) {
+        void print_array(const T& head) {
             print_one("[");
             for (size_t i = 0; i < head.size(); ++i) {
                 print_one(head[i]);
@@ -355,7 +355,7 @@ namespace debug {
         }
 
         template <typename T>
-        void print_map(T& head) {
+        void print_map(const T& head) {
             print_one("{");
             const size_t size = head.size();
             size_t i = 0;
@@ -373,7 +373,7 @@ namespace debug {
 
         // ===== other utilities =====
 
-        string_t generate_header(const LogLevel lvl, const char* file, int line, const char* func) const {
+        string_t generate_header(const LogLevel lvl, const char* file, const int line, const char* func) const {
             string_t header;
             switch (lvl) {
                 case LogLevel::ERROR: header = "[ERROR] "; break;
