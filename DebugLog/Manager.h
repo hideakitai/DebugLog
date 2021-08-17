@@ -9,7 +9,6 @@ namespace debug {
 
     class Manager {
         LogLevel log_lvl {DEBUGLOG_DEFAULT_LOG_LEVEL};
-        LogLevel curr_lvl {DEBUGLOG_DEFAULT_LOG_LEVEL};
         LogBase log_base {LogBase::DEC};
         string_t delim {" "};
         bool b_file {true};
@@ -67,12 +66,15 @@ namespace debug {
             stream = &s;
         }
 
-        template <typename FsType, typename FileType, typename FileMode>
+#ifdef FILE_WRITE
+        // TODO: `File` class is always valid for various file systems??
+        template <typename FsType, typename FileMode>
         void attach(FsType& s, const String& path, const FileMode& mode, const bool auto_save) {
             close();
-            logger = new FsFileLogger<FsType, FileType>(s, path, mode);
+            logger = new FsFileLogger<FsType, File>(s, path, mode);
             b_auto_save = auto_save;
         }
+#endif
 
         void assertion(bool b, const char* file, int line, const char* func, const char* expr, const String& msg = "") {
             if (!b) {
@@ -81,11 +83,16 @@ namespace debug {
                 stream->println(str);
                 if (logger) {
                     logger->println(str);
-                    logger->flush();
                 }
+                close();
                 while (true)
                     ;
             }
+        }
+
+        bool is_open() const {
+            if (logger) return logger->is_open();
+            return false;
         }
 
         void flush() {
@@ -95,6 +102,7 @@ namespace debug {
         void close() {
             flush();
             if (logger) delete logger;
+            logger = nullptr;
         }
 
         LogLevel file_level() const {
@@ -118,12 +126,14 @@ namespace debug {
 
             string_t header = generate_header(level, file, line, func);
             if ((int)level <= (int)log_lvl) {
-                println(header, std::forward<Args>(args)...);
+                print(header);  // to avoid delimiter after header
+                println(std::forward<Args>(args)...);
             }
 #ifdef ARDUINO
             if (!logger) return;
             if ((int)level <= (int)file_lvl) {
-                println_file(header, std::forward<Args>(args)...);
+                print_file(header);  // to avoid delimiter after header
+                println_file(std::forward<Args>(args)...);
             }
 #endif
         }
@@ -184,7 +194,7 @@ namespace debug {
             print_one(head, logger);
             if (sizeof...(tail) != 0)
                 print_one(delim, logger);
-            print(std::forward<Tail>(tail)...);
+            print_file(std::forward<Tail>(tail)...);
         }
 
         void println_file() {
@@ -198,7 +208,7 @@ namespace debug {
             print_one(head, logger);
             if (sizeof...(tail) != 0)
                 print_one(delim, logger);
-            println(std::forward<Tail>(tail)...);
+            println_file(std::forward<Tail>(tail)...);
         }
 #endif
 

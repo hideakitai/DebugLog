@@ -3,11 +3,8 @@
 #undef LOG_INFO
 #undef LOG_DEBUG
 #undef LOG_TRACE
-#ifdef ARDUINO
-#undef LOG_FS_FLUSH
-#undef LOG_FS_CLOSE
-#endif
 #undef ASSERT
+#undef ASSERTM
 
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 \
                                                                                                     : __FILE__)
@@ -18,8 +15,6 @@
 #define LOG_TRACE(...) DebugLog::Manager::get().log(arx::debug::LogLevel::TRACE, __FILENAME__, __LINE__, __func__, __VA_ARGS__)
 
 #ifdef ARDUINO
-#define LOG_FS_FLUSH() DebugLog::Manager::get().flush()
-#define LOG_FS_CLOSE() DebugLog::Manager::get().close()
 #define ASSERT(b) DebugLog::Manager::get().assertion((b), __FILENAME__, __LINE__, __func__, #b)
 #define ASSERTM(b, msg) DebugLog::Manager::get().assertion((b), __FILENAME__, __LINE__, __func__, #b, msg)
 #else  // ARDUINO

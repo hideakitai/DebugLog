@@ -11,6 +11,8 @@ namespace debug {
 
     struct FileLogger {
         virtual ~FileLogger() {}
+
+        virtual bool is_open() = 0;
         virtual void flush() = 0;
 
         virtual size_t print(const __FlashStringHelper*) = 0;
@@ -56,6 +58,8 @@ namespace debug {
         virtual ~FsFileLogger() {
             if (file) file.close();
         }
+
+        virtual bool is_open() override { return file ? true : false; }  // bool file() isn't const...
         virtual void flush() override { file.flush(); }
 
         virtual size_t print(const __FlashStringHelper* x) override { return file.print(x); }
