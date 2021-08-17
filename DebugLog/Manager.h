@@ -120,8 +120,7 @@ namespace debug {
                 if (b_line) header += string_t("L.") + line + string_t(" ");
                 if (b_func) header += func + string_t(" ");
                 header += string_t(": ");
-                print(header);
-                println(detail::forward<Args>(args)...);
+                println(header, detail::forward<Args>(args)...);
 #else
                 if (b_file) {
                     header += file;
@@ -137,8 +136,7 @@ namespace debug {
                     header += " ";
                 };
                 header += ": ";
-                print(header);
-                println(std::forward<Args>(args)...);
+                println(header, std::forward<Args>(args)...);
 #endif
             }
         }
