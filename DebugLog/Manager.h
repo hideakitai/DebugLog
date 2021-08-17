@@ -22,7 +22,6 @@ namespace debug {
         FileLogger* logger {nullptr};
         LogLevel file_lvl {DEBUGLOG_DEFAULT_FILE_LEVEL};
         bool b_auto_save {false};
-        bool b_only_fs {false};
 #endif
 
         // singleton
@@ -68,12 +67,11 @@ namespace debug {
             stream = &s;
         }
 
-        template <typename FsType, typename FileMode>
-        void attach(FsType& s, const String& path, const FileMode& mode, const bool auto_save, const bool only_fs) {
+        template <typename FsType, typename FileType, typename FileMode>
+        void attach(FsType& s, const String& path, const FileMode& mode, const bool auto_save) {
             close();
-            logger = new FsFileLogger<FsType, File>(s, path, mode);
+            logger = new FsFileLogger<FsType, FileType>(s, path, mode);
             b_auto_save = auto_save;
-            b_only_fs = only_fs;
         }
 
         void assertion(bool b, const char* file, int line, const char* func, const char* expr, const String& msg = "") {
@@ -111,162 +109,201 @@ namespace debug {
 
         template <typename... Args>
         void log(LogLevel level, const char* file, int line, const char* func, Args&&... args) {
-            curr_lvl = level;
-            if ((log_lvl == LogLevel::NONE) || (curr_lvl == LogLevel::NONE)) return;
-            if ((int)curr_lvl <= (int)log_lvl) {
-                string_t header = get_header(file, line, func);
+            bool b_ignore = (log_lvl == LogLevel::NONE);
+#ifdef ARDUINO
+            b_ignore &= (file_lvl == LogLevel::NONE);
+#endif
+            b_ignore |= (level == LogLevel::NONE);
+            if (b_ignore) return;
+
+            string_t header = generate_header(level, file, line, func);
+            if ((int)level <= (int)log_lvl) {
                 println(header, std::forward<Args>(args)...);
             }
+#ifdef ARDUINO
+            if (!logger) return;
+            if ((int)level <= (int)file_lvl) {
+                println_file(header, std::forward<Args>(args)...);
+            }
+#endif
         }
 
+        // ===== print / println =====
+
         void print() {
-#ifdef ARDUINO
-            if (logger && b_auto_save) logger->flush();
-#endif
             if (b_base_reset) log_base = LogBase::DEC;
         }
 
         template <typename Head, typename... Tail>
         void print(Head&& head, Tail&&... tail) {
-            print_impl(head, (sizeof...(tail) == 0));
+#ifdef ARDUINO
+            print_one(head, stream);
+            if (sizeof...(tail) != 0)
+                print_one(delim, stream);
+#else
+            print_one(head);
+            if (sizeof...(tail) != 0)
+                print_one(delim);
+#endif
             print(std::forward<Tail>(tail)...);
         }
 
         void println() {
 #ifdef ARDUINO
-            if (!b_only_fs) {
-                stream->println();
-            }
-            if (logger) {
-                logger->println();
-                if (b_auto_save) logger->flush();
-            }
+            print_one("\n", stream);
 #else
-            std::cout << std::endl;
+            print_one("\n");
 #endif
             if (b_base_reset) log_base = LogBase::DEC;
         }
 
         template <typename Head, typename... Tail>
         void println(Head&& head, Tail&&... tail) {
-            print_impl(head, (sizeof...(tail) == 0));
+#ifdef ARDUINO
+            print_one(head, stream);
+            if (sizeof...(tail) != 0)
+                print_one(delim, stream);
+#else
+            print_one(head);
+            if (sizeof...(tail) != 0)
+                print_one(delim);
+#endif
             println(std::forward<Tail>(tail)...);
         }
 
-    private:
-        // ===== print_impl =====
-        // implement print function based on the argument types
-
-        template <typename Head>
-        void print_impl(Head&& head, const bool b_last_idx) {
 #ifdef ARDUINO
-            if (!b_only_fs) {
-                print_exec(head, stream);
-                if (!b_last_idx)
-                    stream->print(delim);
-            }
-            if (logger && ((int)curr_lvl <= (int)file_lvl)) {
-                print_exec(head, logger);
-                if (!b_last_idx)
-                    logger->print(delim);
-            }
-#else
-            print_exec(head);
-            if (!b_last_idx)
-                std::cout << delim;
-#endif
+        void print_file() {
+            if (!logger) return;
+            if (b_auto_save) logger->flush();
+            print();
         }
 
-        template <typename T>
-        void print_impl(Array<T>& head, const bool b_last_idx) {
-            print_array(head, b_last_idx);
+        template <typename Head, typename... Tail>
+        void print_file(Head&& head, Tail&&... tail) {
+            if (!logger) return;
+            print_one(head, logger);
+            if (sizeof...(tail) != 0)
+                print_one(delim, logger);
+            print(std::forward<Tail>(tail)...);
+        }
+
+        void println_file() {
+            if (!logger) return;
+            print_one("\n", logger);
+            print_file();
+        }
+
+        template <typename Head, typename... Tail>
+        void println_file(Head&& head, Tail&&... tail) {
+            print_one(head, logger);
+            if (sizeof...(tail) != 0)
+                print_one(delim, logger);
+            println(std::forward<Tail>(tail)...);
+        }
+#endif
+
+    private:
+#ifdef ARDUINO
+
+        // print without base
+        template <typename Head, typename S>
+        void print_one(Head&& head, S* s) { s->print(head); }
+
+        // print with base
+        template <typename S>
+        void print_one(signed char head, S* s) { s->print(head, (int)log_base); }
+        template <typename S>
+        void print_one(unsigned char head, S* s) { s->print(head, (int)log_base); }
+        template <typename S>
+        void print_one(short head, S* s) { s->print(head, (int)log_base); }
+        template <typename S>
+        void print_one(unsigned short head, S* s) { s->print(head, (int)log_base); }
+        template <typename S>
+        void print_one(int head, S* s) { s->print(head, (int)log_base); }
+        template <typename S>
+        void print_one(unsigned int head, S* s) { s->print(head, (int)log_base); }
+        template <typename S>
+        void print_one(long head, S* s) { s->print(head, (int)log_base); }
+        template <typename S>
+        void print_one(unsigned long head, S* s) { s->print(head, (int)log_base); }
+
+        template <typename S>
+        void print_one(LogBase& head, S*) {
+            log_base = head;
+        }
+
+        template <typename S, typename T>
+        void print_one(Array<T>& head, S* s) {
+            print_array(head, s);
         }
 
 #if ARX_HAVE_LIBSTDCPLUSPLUS >= 201103L  // Have libstdc++11
 
-        template <typename T>
-        void print_impl(vec_t<T>& head, const bool b_last_idx) {
-            print_array(head, b_last_idx);
+        template <typename S, typename T>
+        void print_one(vec_t<T>& head, S* s) {
+            print_array(head, s);
         }
 
-        template <typename T>
-        void print_impl(deq_t<T>& head, const bool b_last_idx) {
-            print_array(head, b_last_idx);
+        template <typename S, typename T>
+        void print_one(deq_t<T>& head, S* s) {
+            print_array(head, s);
         }
 
-        template <typename K, typename V>
-        void print_impl(map_t<K, V>& head, const bool b_last_idx) {
-            print_impl("{", false);
-            for (const auto& kv : head) {
-                print_impl(kv.first, false);
-                print_impl(":", false);
-                print_impl(kv.second, false);
-                print_impl(",", false);
-            }
-            print_impl("}", b_last_idx);
+        template <typename S, typename K, typename V>
+        void print_one(map_t<K, V>& head, S* s) {
+            print_map(head, s);
         }
 
 #else  // Do not have libstdc++11
 
-        template <typename T, size_t N>
-        void print_impl(vec_t<T, N>& head, const bool b_last_idx) {
-            print_array(head, b_last_idx);
+        template <typename S, typename T, size_t N>
+        void print_one(vec_t<T, N>& head, S* s) {
+            print_array(head, s);
         }
 
-        template <typename T, size_t N>
-        void print_impl(deq_t<T, N>& head, const bool b_last_idx) {
-            print_array(head, b_last_idx);
+        template <typename S, typename T, size_t N>
+        void print_one(deq_t<T, N>& head, S* s) {
+            print_array(head, s);
         }
 
-        template <typename K, typename V, size_t N>
-        void print_impl(map_t<K, V, N>& head, const bool b_last_idx) {
-            print_impl("{", false);
-            for (const auto& kv : head) {
-                print_impl(kv.first, false);
-                print_impl(":", false);
-                print_impl(kv.second, false);
-                print_impl(",", false);
-            }
-            print_impl("}", b_last_idx);
+        template <typename S, typename K, typename V, size_t N>
+        void print_one(map_t<K, V, N>& head, S* s) {
+            print_map(head, s);
         }
 
 #endif  // Do not have libstdc++11
 
-        void print_impl(LogBase& head, const bool) {
-            log_base = head;
-        }
-
-        template <typename T>
-        void print_array(T& arr, const bool b_last_idx) {
-            print_impl("[", false);
-            for (size_t i = 0; i < arr.size(); ++i) {
-                print_impl(arr[i], false);
+        // print one helper
+        template <typename S, typename T>
+        void print_array(T& head, S* s) {
+            print_one("[", s);
+            for (size_t i = 0; i < head.size(); ++i) {
+                print_one(head[i], s);
+                if (i + 1 != head.size())
+                    print_one(", ", s);
             }
-            print_impl("]", b_last_idx);
+            print_one("]", s);
         }
 
-#ifdef ARDUINO
-        template <typename Head, typename S>
-        void print_exec(Head&& head, S* s) { s->print(head); }
-        template <typename S>
-        void print_exec(signed char head, S* s) { s->print(head, (int)log_base); }
-        template <typename S>
-        void print_exec(unsigned char head, S* s) { s->print(head, (int)log_base); }
-        template <typename S>
-        void print_exec(short head, S* s) { s->print(head, (int)log_base); }
-        template <typename S>
-        void print_exec(unsigned short head, S* s) { s->print(head, (int)log_base); }
-        template <typename S>
-        void print_exec(int head, S* s) { s->print(head, (int)log_base); }
-        template <typename S>
-        void print_exec(unsigned int head, S* s) { s->print(head, (int)log_base); }
-        template <typename S>
-        void print_exec(long head, S* s) { s->print(head, (int)log_base); }
-        template <typename S>
-        void print_exec(unsigned long head, S* s) { s->print(head, (int)log_base); }
+        template <typename S, typename T>
+        void print_map(T& head, S* s) {
+            print_one("{", s);
+            const size_t size = head.size();
+            size_t i = 0;
+            for (const auto& kv : head) {
+                print_one(kv.first, s);
+                print_one(":", s);
+                print_one(kv.second, s);
+                if (++i != size)
+                    print_one(", ", s);
+            }
+            print_one("}", s);
+        }
+
 #else
+
         template <typename Head>
-        void print_exec(Head&& head) {
+        void print_one(Head&& head) {
             switch (log_base) {
                 case LogBase::DEC: std::cout << std::dec; break;
                 case LogBase::HEX: std::cout << std::hex; break;
@@ -274,10 +311,68 @@ namespace debug {
             }
             std::cout << head;
         }
+
+        template <typename T>
+        void print_one(Array<T>& head) {
+            print_array(head);
+        }
+
+        template <typename T>
+        void print_one(vec_t<T>& head) {
+            print_array(head);
+        }
+
+        template <typename T>
+        void print_one(deq_t<T>& head) {
+            print_array(head);
+        }
+
+        template <typename K, typename V>
+        void print_one(map_t<K, V>& head) {
+            print_map(head);
+        }
+
+        // print one helper
+        template <typename T>
+        void print_array(T& head) {
+            print_one("[");
+            for (size_t i = 0; i < head.size(); ++i) {
+                print_one(head[i]);
+                if (i + 1 != head.size())
+                    print_one(", ");
+            }
+            print_one("]");
+        }
+
+        template <typename T>
+        void print_map(T& head) {
+            print_one("{");
+            const size_t size = head.size();
+            size_t i = 0;
+            for (const auto& kv : head) {
+                print_one(kv.first);
+                print_one(":");
+                print_one(kv.second);
+                if (++i != size)
+                    print_one(", ");
+            }
+            print_one("}");
+        }
+
 #endif
 
-        string_t get_header(const char* file, int line, const char* func) const {
-            string_t header = get_log_level_header();
+        // ===== other utilities =====
+
+        string_t generate_header(const LogLevel lvl, const char* file, int line, const char* func) const {
+            string_t header;
+            switch (lvl) {
+                case LogLevel::ERROR: header = "[ERROR] "; break;
+                case LogLevel::WARN: header = "[WARN] "; break;
+                case LogLevel::INFO: header = "[INFO] "; break;
+                case LogLevel::DEBUG: header = "[DEBUG] "; break;
+                case LogLevel::TRACE: header = "[TRACE] "; break;
+                default: header = ""; break;
+            }
 #ifdef ARDUINO
             if (b_file) header += file + string_t(" ");
             if (b_line) header += string_t("L.") + line + string_t(" ");
@@ -300,31 +395,6 @@ namespace debug {
             header += ": ";
 #endif
             return header;
-        }
-
-        string_t get_log_level_header() const {
-            string_t lvl_str;
-            switch (curr_lvl) {
-                case LogLevel::ERROR:
-                    lvl_str = "[ERROR] ";
-                    break;
-                case LogLevel::WARN:
-                    lvl_str = "[WARN] ";
-                    break;
-                case LogLevel::INFO:
-                    lvl_str = "[INFO] ";
-                    break;
-                case LogLevel::DEBUG:
-                    lvl_str = "[DEBUG] ";
-                    break;
-                case LogLevel::TRACE:
-                    lvl_str = "[TRACE] ";
-                    break;
-                default:
-                    lvl_str = "";
-                    break;
-            }
-            return lvl_str;
         }
     };
 

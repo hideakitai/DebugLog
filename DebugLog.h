@@ -33,8 +33,8 @@ using DebugLogBase = arx::debug::LogBase;
 #define LOG_GET_FILE_LEVEL() DebugLog::Manager::get().file_level()
 #define LOG_SET_FILE_LEVEL(l) DebugLog::Manager::get().file_level(l)
 #define LOG_ATTACH_SERIAL(s) DebugLog::Manager::get().attach(s)
-#define LOG_ATTACH_FS(fs, path, mode, save) DebugLog::Manager::get().attach(fs, path, mode, save, false)
-#define LOG_ATTACH_FS_BG(fs, path, mode, save) DebugLog::Manager::get().attach(fs, path, mode, save, true)
+#define LOG_ATTACH_FS(fs, path, mode, save) DebugLog::Manager::get().attach(fs, path, mode, save)
+#define LOG_ATTACH_FS_BG(fs, path, mode, save) DebugLog::Manager::get().attach(fs, path, mode, save)
 #endif  // ARDUINO
 
 #include "DebugLogRestoreState.h"
