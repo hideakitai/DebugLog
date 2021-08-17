@@ -1,6 +1,6 @@
-// Uncommenting DEBUGLOG_DISABLE_MACRO disables ASSERT and all log (Release Mode)
+// Uncommenting DEBUGLOG_DISABLE_LOG disables ASSERT and all log (Release Mode)
 // PRINT and PRINTLN are always valid even in Release Mode
-// #define DEBUGLOG_DISABLE_MACRO
+// #define DEBUGLOG_DISABLE_LOG
 
 // You can also set default log level by defining macro (default: INFO)
 // #define DEBUGLOG_DEFAULT_LOG_LEVEL LogLevel::TRACE
@@ -130,6 +130,6 @@ void loop() {
     if (LOG_FILE_IS_OPEN()) {
         LOG_FILE_CLOSE();
     }
-    PRINTLN("if DEBUGLOG_DISABLE_MACRO is commented out (assert is enabled), does not come here");
+    PRINTLN("if DEBUGLOG_DISABLE_LOG is commented out (assert is enabled), does not come here");
     delay(1000);
 }

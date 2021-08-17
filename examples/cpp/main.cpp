@@ -1,6 +1,6 @@
-// Uncommenting DEBUGLOG_DISABLE_MACRO disables ASSERT and all log (Release Mode)
+// Uncommenting DEBUGLOG_DISABLE_LOG disables ASSERT and all log (Release Mode)
 // PRINT and PRINTLN are always valid even in Release Mode
-// #define DEBUGLOG_DISABLE_MACRO
+// #define DEBUGLOG_DISABLE_LOG
 
 // You can also set default log level by defining macro (default: INFO)
 // #define DEBUGLOG_DEFAULT_LOG_LEVEL LogLevel::TRACE
