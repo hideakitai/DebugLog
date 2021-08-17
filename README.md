@@ -5,21 +5,21 @@ Serial based assertion and log library for Arduino
 ## Feature
 
 - Printing variadic arguments in one line
-- Release mode : `#define DEBUGLOG_DISABLE_MACRO` can disables debug info (`LOG_XXXX`)
+- Release Mode `#define DEBUGLOG_DISABLE_LOG` can easily disable logging (`LOG_XXXX`, `ASSERT`)
 - Log level control (`ERROR`, `WARN`, `INFO`, `DEBUG`, `TRACE`)
 - Automatically or manually saving log to file
-- Multiple file system support (`SdFat`, `SPIFFS`, etc.)
-- APIs can be used in standard C++ apps
+- Multiple file system support (`SD`, `SdFat`, `SPIFFS`, etc.)
+- APIs can also be used in standard C++ apps
 
 ## Basic Usage
 
 ```C++
-// Uncommenting DEBUGLOG_DISABLE_MACRO disables ASSERT and all log (Release Mode)
+// Uncommenting DEBUGLOG_DISABLE_LOG disables ASSERT and all log (Release Mode)
 // PRINT and PRINTLN are always valid even in Release Mode
-// #define DEBUGLOG_DISABLE_MACRO
+// #define DEBUGLOG_DISABLE_LOG
 
-// You can also set default log level by defining macro
-// #define DEBUGLOG_DEFAULT_LOGLEVEL LogLevel::WARN
+// You can also set default log level by defining macro (default: INFO)
+// #define DEBUGLOG_DEFAULT_LOG_LEVEL LogLevel::TRACE
 
 #include <DebugLog.h>
 
@@ -36,7 +36,7 @@ void setup() {
 
     // The default log_leval is DebugLogLevel::INFO
     // 0: NONE, 1: ERROR, 2: WARN, 3: INFO, 4: DEBUG, 5: TRACE
-    // PRINTLN("current log level is", (int)LOG_GET_LEVEL());
+    PRINTLN("current log level is", (int)LOG_GET_LEVEL());
 
     // The default log_leval is DebugLogLevel::INFO
     LOG_ERROR("this is error log");
@@ -71,11 +71,14 @@ void setup() {
 ## Save Log to SD Card
 
 ```C++
+// You can also set default file level by defining macro (default: ERROR)
+// #define DEBUGLOG_DEFAULT_FILE_LEVEL LogLevel::WARN
+
 // if you want to use standard SD library
 #include <SD.h>
 #define fs SD
 
-// if you want to use SdFat
+// If you want to use SdFat
 // #include <SdFat.h>
 // SdFat fs;
 // SdFatSdio fs;
@@ -89,59 +92,45 @@ void setup() {
 
 void setup() {
     if (fs.begin()) {
-      String filename = "test.txt";
-      LOG_ATTACH_SD(fs, filename, false, true);
-      // 3rd arg => true: auto save every logging, false: manually save
-      // 4th arg => true: only log to SD, false: also print via Serial
+        String filename = "test.txt";
+
+        // Set file system to save every log automatically
+        LOG_ATTACH_FS_AUTO(fs, filename, FILE_WRITE);
+
+        // Set file system to save log manually
+        // LOG_ATTACH_FS_MANUAL(fs, filename, FILE_WRITE);
     }
 
     // Apart from the log level to be displayed,
-    // you can set the log level to be saved to a file (Default is LogLevel::INFO)
-    LOG_SET_SAVE_LEVEL(DebugLogLevel::ERROR);
+    // you can set the log level to be saved to a file (Default is LogLevel::ERROR)
+    LOG_FILE_SET_LEVEL(DebugLogLevel::INFO);
 
-    // if 3rd arg is true, logs will be automatically saved to SD
+    // If LOG_ATTACH_FS_AUTO is used, logs will be automatically saved to SD
     LOG_ERROR("error!");
 
-    // if 3rd arg is false, you should manually save logs
+    // If LOG_ATTACH_FS_MANUAL is used, you should manually save logs
     // however this is much faster than auto save (saving takes few milliseconds)
-    LOG_FS_FLUSH(); // manually save to SD card and continue logging
-    // LOG_FS_CLOSE(); // flush() and finish logging (ASSERT won't be saved to SD)
+    LOG_FILE_FLUSH(); // manually save to SD card and continue logging
+    // LOG_FILE_CLOSE(); // flush() and finish logging (ASSERT won't be saved to SD)
 }
 ```
 
 Please see `examples/log_to_file` , `examples/log_to_file_manual_save` for more details. And please note:
 
-- one log function call can takes 3-20 ms if you log to file (depending on environment)
-- if you disable auto save, you should call `LOG_FS_FLUSH()` or `LOG_FS_CLOSE()` to save logs
-
-## Control Log Level Scope
-
-You can control the scope of `DebugLog` by including following header files.
-
-- `DebugLogEnable.h`
-- `DebugLogDisable.h`
-- `DebugLogRestoreState.h`
-
-After including `DebugLogEnable.h` or `DebugLogDisable.h`, macros are enabled/disabled.
-Finally you should include `DebugLogRestoreState.h` to restore the previous state.
-Please see practical example `examples/control_scope` for details.
-
-```C++
-#define DEBUGLOG_DISABLE_MACRO
-#include <DebugLog.h>
-
-// here is release mode (disable DebugLog)
-
-#include <DebugLogEnable.h>
-
-// here is debug mode (enable DebugLog)
-
-#include <DebugLogRestoreState.h>
-
-// here is release mode (restored)
-```
+- One log function call can takes 3-20 ms if you log to file (depending on environment)
+- If you disable auto save, you should call `LOG_FILE_FLUSH()` or `LOG_FILE_CLOSE()` to save logs
 
 ## APIs
+
+| APIs                         | Serial | File     | Log Level    | Release Mode |
+| ---------------------------- | ------ | -------- | ------------ | ------------ |
+| `PRINT`, `PRINTLN`           | YES    | NO       | IGNORED      | ENABLED      |
+| `PRINT_FILE`, `PRINTLN_FILE` | NO     | YES \*   | IGNORED      | ENABLED \*   |
+| `ASSERT`, `ASSERTM`          | YES    | YES \*   | IGNORED      | DISABLED     |
+| `LOG_XXXXX`                  | YES    | YES \*\* | CONTROLLABLE | DISABLED     |
+
+`*` : Only after `LOG_FS_ATTACH_AUTO` or `LOG_FS_ATTACH_MANUAL` is called
+`**` : Condition `*` is satisfied + only if `LOG_FILE_LEVEL` is matched
 
 ### Basic Logging Macros
 
@@ -152,7 +141,7 @@ Please see practical example `examples/control_scope` for details.
 #define PRINTLN(...)
 ```
 
-These logging APIs are enabled only in debug mode.
+These logging APIs are enabled only in debug mode. Log level can control the visibility.
 
 ```C++
 #define LOG_ERROR(...)
@@ -160,16 +149,30 @@ These logging APIs are enabled only in debug mode.
 #define LOG_INFO(...)
 #define LOG_DEBUG(...)
 #define LOG_TRACE(...)
+```
+
+Assertion suspends program if the condition is `true`.
+
+```C++
 #define ASSERT(b)
 #define ASSERTM(b, msg)
 ```
 
-### Logging to File
+## Logging to File
+
+`PRINT_FILE` and `PRINTLN_FILE` are available in both release and debug mode.
+
+```C++
+#define PRINT_FILE(...)
+#define PRINTLN_FILE(...)
+```
+
+If you use `LOG_ATTACH_FS_MANUAL`, these macros are used to flush files manually.
 
 ```C++
 // Arduino Only (Manual operation)
-#define LOG_FS_FLUSH()
-#define LOG_FS_CLOSE()
+#define LOG_FILE_FLUSH()
+#define LOG_FILE_CLOSE()
 ```
 
 ### Log Option
@@ -182,10 +185,12 @@ These logging APIs are enabled only in debug mode.
 #define LOG_SET_DELIMITER(delim)
 #define LOG_SET_BASE_RESET(b)
 // Arduino Only
-#define LOG_GET_SAVE_LEVEL() DebugLog::Manager::get().saveLevel()
-#define LOG_SET_SAVE_LEVEL(l) DebugLog::Manager::get().saveLevel(l)
-#define LOG_ATTACH_SERIAL(s)
-#define LOG_ATTACH_FS(fs, path, auto_save, only_sd)
+#define LOG_ATTACH_SERIAL(serial)
+#define LOG_FILE_IS_OPEN()
+#define LOG_FILE_GET_LEVEL()
+#define LOG_FILE_SET_LEVEL(lvl)
+#define LOG_ATTACH_FS_AUTO(fs, path, mode)
+#define LOG_ATTACH_FS_MANUAL(fs, path, mode)
 ```
 
 ## Option Definitions
@@ -212,6 +217,33 @@ enum class DebugLogBase {
     OCT = 8,
     BIN = 2,  // only for Arduino
 };
+```
+
+## Control Log Level Scope
+
+You can control the scope of `DebugLog` by including following header files.
+
+- `DebugLogEnable.h`
+- `DebugLogDisable.h`
+- `DebugLogRestoreState.h`
+
+After including `DebugLogEnable.h` or `DebugLogDisable.h`, macros are enabled/disabled.
+Finally you should include `DebugLogRestoreState.h` to restore the previous state.
+Please see practical example `examples/control_scope` for details.
+
+```C++
+#define DEBUGLOG_DISABLE_LOG
+#include <DebugLog.h>
+
+// here is release mode (disable DebugLog)
+
+#include <DebugLogEnable.h>
+
+// here is debug mode (enable DebugLog)
+
+#include <DebugLogRestoreState.h>
+
+// here is release mode (restored)
 ```
 
 ## Used Inside of
