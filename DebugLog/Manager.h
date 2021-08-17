@@ -114,30 +114,8 @@ namespace debug {
             curr_lvl = level;
             if ((log_lvl == LogLevel::NONE) || (curr_lvl == LogLevel::NONE)) return;
             if ((int)curr_lvl <= (int)log_lvl) {
-                string_t header = get_log_level_header();
-#ifdef ARDUINO
-                if (b_file) header += file + string_t(" ");
-                if (b_line) header += string_t("L.") + line + string_t(" ");
-                if (b_func) header += func + string_t(" ");
-                header += string_t(": ");
-                println(header, detail::forward<Args>(args)...);
-#else
-                if (b_file) {
-                    header += file;
-                    header += " ";
-                };
-                if (b_line) {
-                    header += "L.";
-                    header += std::to_string(line);
-                    header += " ";
-                }
-                if (b_func) {
-                    header += func;
-                    header += " ";
-                };
-                header += ": ";
+                string_t header = get_header(file, line, func);
                 println(header, std::forward<Args>(args)...);
-#endif
             }
         }
 
@@ -297,6 +275,32 @@ namespace debug {
             std::cout << head;
         }
 #endif
+
+        string_t get_header(const char* file, int line, const char* func) const {
+            string_t header = get_log_level_header();
+#ifdef ARDUINO
+            if (b_file) header += file + string_t(" ");
+            if (b_line) header += string_t("L.") + line + string_t(" ");
+            if (b_func) header += func + string_t(" ");
+            header += string_t(": ");
+#else
+            if (b_file) {
+                header += file;
+                header += " ";
+            };
+            if (b_line) {
+                header += "L.";
+                header += std::to_string(line);
+                header += " ";
+            }
+            if (b_func) {
+                header += func;
+                header += " ";
+            };
+            header += ": ";
+#endif
+            return header;
+        }
 
         string_t get_log_level_header() const {
             string_t lvl_str;
