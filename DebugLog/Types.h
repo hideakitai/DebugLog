@@ -24,19 +24,6 @@ static constexpr uint8_t BIN {2};
 namespace arx {
 namespace debug {
 
-    namespace detail {
-        template <class T>
-        struct remove_reference { using type = T; };
-        template <class T>
-        struct remove_reference<T&> { using type = T; };
-        template <class T>
-        struct remove_reference<T&&> { using type = T; };
-        template <class T>
-        constexpr T&& forward(typename remove_reference<T>::type& t) noexcept { return static_cast<T&&>(t); }
-        template <class T>
-        constexpr T&& forward(typename remove_reference<T>::type&& t) noexcept { return static_cast<T&&>(t); }
-    }  // namespace detail
-
 #if ARX_HAVE_LIBSTDCPLUSPLUS >= 201103L  // Have libstdc++11
     template <typename T>
     using vec_t = std::vector<T>;

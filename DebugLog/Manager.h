@@ -151,11 +151,7 @@ namespace debug {
         template <typename Head, typename... Tail>
         void print(Head&& head, Tail&&... tail) {
             print_impl(head, (sizeof...(tail) == 0));
-#ifdef ARDUINO
-            print(detail::forward<Tail>(tail)...);
-#else
             print(std::forward<Tail>(tail)...);
-#endif
         }
 
         void println() {
@@ -176,14 +172,13 @@ namespace debug {
         template <typename Head, typename... Tail>
         void println(Head&& head, Tail&&... tail) {
             print_impl(head, (sizeof...(tail) == 0));
-#ifdef ARDUINO
-            println(detail::forward<Tail>(tail)...);
-#else
             println(std::forward<Tail>(tail)...);
-#endif
         }
 
     private:
+        // ===== print_impl =====
+        // implement print function based on the argument types
+
         template <typename Head>
         void print_impl(Head&& head, const bool b_last_idx) {
 #ifdef ARDUINO
