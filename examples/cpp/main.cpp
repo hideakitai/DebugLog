@@ -2,8 +2,8 @@
 // PRINT and PRINTLN are always valid even in Release Mode
 // #define DEBUGLOG_DISABLE_MACRO
 
-// You can also set default log level by defining macro
-// #define DEBUGLOG_DEFAULT_LOGLEVEL LogLevel::WARN
+// You can also set default log level by defining macro (default: INFO)
+// #define DEBUGLOG_DEFAULT_LOG_LEVEL LogLevel::TRACE
 
 #include "../../DebugLog.h"
 
@@ -17,7 +17,7 @@ int main() {
 
     // The default log_leval is DebugLogLevel::INFO
     // 0: NONE, 1: ERROR, 2: WARN, 3: INFO, 4: DEBUG, 5: TRACE
-    // PRINTLN("current log level is", (int)LOG_GET_LEVEL());
+    PRINTLN("current log level is", (int)LOG_GET_LEVEL());
 
     // The default log_leval is DebugLogLevel::INFO
     LOG_ERROR("this is error log");
@@ -30,13 +30,11 @@ int main() {
     float arr[3] {1.1, 2.2, 3.3};
     PRINTLN("Array can be also printed like this", LOG_AS_ARR(arr, 3));
 
-#if ARX_HAVE_LIBSTDCPLUSPLUS >= 201103L  // Have libstdc++11
     // Log containers
     std::vector<int> vs {1, 2, 3};
     std::deque<float> ds {1.1, 2.2, 3.3};
     std::map<std::string, int> ms {{"one", 1}, {"two", 2}, {"three", 3}};
     PRINTLN("Containers can also be printed like", vs, ds, ms);
-#endif
 
     // In c++ app, standard assert is used
     int x = 1;

@@ -2,8 +2,8 @@
 // PRINT and PRINTLN are always valid even in Release Mode
 // #define DEBUGLOG_DISABLE_MACRO
 
-// You can also set default log level by defining macro
-// #define DEBUGLOG_DEFAULT_LOGLEVEL LogLevel::WARN
+// You can also set default log level by defining macro (default: INFO)
+// #define DEBUGLOG_DEFAULT_LOG_LEVEL LogLevel::TRACE
 
 #include <DebugLog.h>
 

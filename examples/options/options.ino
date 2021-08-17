@@ -2,8 +2,8 @@
 // PRINT and PRINTLN are always valid even in Release Mode
 // #define DEBUGLOG_DISABLE_MACRO
 
-// You can also set default log level by defining macro
-// #define DEBUGLOG_DEFAULT_LOGLEVEL LogLevel::WARN
+// You can also set default log level by defining macro (default: INFO)
+// #define DEBUGLOG_DEFAULT_LOG_LEVEL LogLevel::TRACE
 
 #include <DebugLog.h>
 
@@ -22,8 +22,8 @@ void setup() {
         DebugLogBase::HEX, 85);
 
     // You can change auto reset for base setting (default: true)
-    LOG_SET_BASE_RESET(false);
-    PRINTLN("This would be hex by default", DebugLogBase::HEX, 255);
+    // LOG_SET_BASE_RESET(false);
+    PRINTLN("This would be hex", DebugLogBase::HEX, 255);
     PRINTLN("If you set LOG_SET_BASE_RESET(false), this would be hex", 255);
 
     // You can change the delimiter
