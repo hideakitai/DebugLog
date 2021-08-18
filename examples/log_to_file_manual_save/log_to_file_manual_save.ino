@@ -3,10 +3,10 @@
 // #define DEBUGLOG_DISABLE_LOG
 
 // You can also set default log level by defining macro (default: INFO)
-// #define DEBUGLOG_DEFAULT_LOG_LEVEL LogLevel::TRACE
+// #define DEBUGLOG_DEFAULT_LOG_LEVEL DebugLogLevel::TRACE
 
 // You can also set default file level by defining macro (default: ERROR)
-// #define DEBUGLOG_DEFAULT_FILE_LEVEL LogLevel::WARN
+// #define DEBUGLOG_DEFAULT_FILE_LEVEL DebugLogLevel::WARN
 
 // if you want to use standard SD library
 #include <SD.h>
@@ -84,7 +84,7 @@ void setup() {
     PRINTLN_FILE(1, 2.2, "three", "=> like this");
 
     // Apart from the log level to be displayed,
-    // you can set the log level to be saved to a file (Default is LogLevel::ERROR)
+    // you can set the log level to be saved to a file (Default is DebugLogLevel::ERROR)
     LOG_FILE_SET_LEVEL(DebugLogLevel::INFO);
 
     // The default log_leval is DebugLogLevel::INFO
