@@ -493,6 +493,7 @@ enum class DebugLogBase {
 
 - [ArduinoOSC](https://github.com/hideakitai/ArduinoOSC)
 - [MsgPack](https://github.com/hideakitai/MsgPack)
+- [TaskManager](https://github.com/hideakitai/TaskManager)
 - [ES920](https://github.com/hideakitai/ES920)
 - [Sony9PinRemote](https://github.com/hideakitai/Sony9PinRemote)
 
