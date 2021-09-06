@@ -75,7 +75,7 @@ void setup() {
         // LOG_ATTACH_FS_MANUAL(fs, filename, FILE_APPEND);  // append to file
 
     } else {
-        ASSERTM(true, "FileSystem initialization failed!");
+        ASSERTM(false, "FileSystem initialization failed!");
     }
 
     // PRINT_FILE and PRINTLN_FILE is not affected by file_level (always visible)
