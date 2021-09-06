@@ -17,6 +17,10 @@
 // SdFat fs;
 // SdFatSdio fs;
 
+// If you want use SD_MMC (ESP) or other FileSystems
+// #include <SD_MMC.h>
+// #define fs SD_MMC
+
 // If you want use SPIFFS (ESP32) or other FileSystems
 // #include <SPIFFS.h>
 // #define fs SPIFFS
