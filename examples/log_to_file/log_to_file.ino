@@ -42,7 +42,7 @@ void print_all_files() {
     while (true) {
         File entry = root.openNextFile();
         if (!entry) {
-            PRINTLN("========== Read all files DONE ==========");
+            PRINTLN("========== Read all files DONE ==========\n");
             break;
         }
         PRINTLN("=====", entry.name(), "=====");
