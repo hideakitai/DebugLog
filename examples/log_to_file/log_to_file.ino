@@ -49,7 +49,8 @@ void print_all_files() {
         if (entry.isDirectory()) {
             ;  // ignore directory
         } else {
-            while (entry.available()) {
+            PRINTLN("File size =", entry.available(), "bytes");
+            while (entry.available() > 0) {
                 PRINT((char)entry.read());
             }
             PRINTLN();
