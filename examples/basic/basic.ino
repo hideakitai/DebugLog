@@ -3,7 +3,7 @@
 // #define DEBUGLOG_DISABLE_LOG
 
 // You can also set default log level by defining macro (default: INFO)
-// #define DEBUGLOG_DEFAULT_LOG_LEVEL DebugLogLevel::TRACE
+// #define DEBUGLOG_DEFAULT_LOG_LEVEL DebugLogLevel::LVL_TRACE
 
 #include <DebugLog.h>
 
@@ -16,13 +16,13 @@ void setup() {
     PRINTLN(1, 2.2, "three", "=> like this");
 
     // You can change log_leval by following macro
-    // LOG_SET_LEVEL(DebugLogLevel::TRACE);
+    // LOG_SET_LEVEL(DebugLogLevel::LVL_TRACE);
 
-    // The default log_leval is DebugLogLevel::INFO
+    // The default log_leval is DebugLogLevel::LVL_INFO
     // 0: NONE, 1: ERROR, 2: WARN, 3: INFO, 4: DEBUG, 5: TRACE
     PRINTLN("current log level is", (int)LOG_GET_LEVEL());
 
-    // The default log_leval is DebugLogLevel::INFO
+    // The default log_leval is DebugLogLevel::LVL_INFO
     LOG_ERROR("this is error log");
     LOG_WARN("this is warn log");
     LOG_INFO("this is info log");

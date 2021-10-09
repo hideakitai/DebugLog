@@ -3,7 +3,7 @@
 // #define DEBUGLOG_DISABLE_LOG
 
 // You can also set default log level by defining macro (default: INFO)
-// #define DEBUGLOG_DEFAULT_LOG_LEVEL DebugLogLevel::TRACE
+// #define DEBUGLOG_DEFAULT_LOG_LEVEL DebugLogLevel::LVL_TRACE
 
 #include <DebugLog.h>
 
@@ -11,7 +11,7 @@ void setup() {
     Serial.begin(115200);
     delay(2000);
 
-    // The default log_leval is DebugLogLevel::INFO
+    // The default log_leval is DebugLogLevel::LVL_INFO
     // 0: NONE, 1: ERROR, 2: WARN, 3: INFO, 4: DEBUG, 5: TRACE
     PRINTLN("current log level is", (int)LOG_GET_LEVEL());
 
@@ -24,12 +24,12 @@ void setup() {
     // Let's try to change the log_level and see what happens
     for (size_t i = 0; i < 6; ++i) {
         switch (i) {
-            case 0: LOG_SET_LEVEL(DebugLogLevel::TRACE); break;
-            case 1: LOG_SET_LEVEL(DebugLogLevel::DEBUG); break;
-            case 2: LOG_SET_LEVEL(DebugLogLevel::INFO); break;
-            case 3: LOG_SET_LEVEL(DebugLogLevel::WARN); break;
-            case 4: LOG_SET_LEVEL(DebugLogLevel::ERROR); break;
-            default: LOG_SET_LEVEL(DebugLogLevel::NONE); break;
+            case 0: LOG_SET_LEVEL(DebugLogLevel::LVL_TRACE); break;
+            case 1: LOG_SET_LEVEL(DebugLogLevel::LVL_DEBUG); break;
+            case 2: LOG_SET_LEVEL(DebugLogLevel::LVL_INFO); break;
+            case 3: LOG_SET_LEVEL(DebugLogLevel::LVL_WARN); break;
+            case 4: LOG_SET_LEVEL(DebugLogLevel::LVL_ERROR); break;
+            default: LOG_SET_LEVEL(DebugLogLevel::LVL_NONE); break;
         }
 
         // PRINT and PRINTLN is not affected by the log_level (always visible)
