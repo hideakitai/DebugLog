@@ -3,7 +3,7 @@
 // #define DEBUGLOG_DISABLE_LOG
 
 // You can also set default log level by defining macro (default: INFO)
-// #define DEBUGLOG_DEFAULT_LOG_LEVEL DebugLogLevel::LVL_TRACE
+// #define DEBUGLOG_DEFAULT_LOG_LEVEL_TRACE
 
 #include "../../DebugLog.h"
 

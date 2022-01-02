@@ -3,10 +3,10 @@
 // #define DEBUGLOG_DISABLE_LOG
 
 // You can also set default log level by defining macro (default: INFO)
-// #define DEBUGLOG_DEFAULT_LOG_LEVEL DebugLogLevel::LVL_TRACE
+// #define DEBUGLOG_DEFAULT_LOG_LEVEL_TRACE
 
 // You can also set default file level by defining macro (default: ERROR)
-// #define DEBUGLOG_DEFAULT_FILE_LEVEL DebugLogLevel::LVL_WARN
+// #define DEBUGLOG_DEFAULT_FILE_LEVEL_WARN
 
 // if you want to use standard SD library
 #include <SD.h>
