@@ -489,6 +489,22 @@ enum class DebugLogBase {
 };
 ```
 
+### Log Precision
+
+```C++
+enum class LogPrecision {
+    ZERO,
+    ONE,
+    TWO,
+    THREE,
+    FOUR,
+    FIVE,
+    SIX,
+    SEVEN,
+    EIGHT,
+};
+```
+
 ## Used Inside of
 
 - [ArduinoOSC](https://github.com/hideakitai/ArduinoOSC)

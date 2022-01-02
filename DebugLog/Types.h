@@ -65,6 +65,20 @@ namespace debug {
 #endif
     };
 
+#ifdef ARDUINO
+    enum class LogPrecision {
+        ZERO,
+        ONE,
+        TWO,
+        THREE,
+        FOUR,
+        FIVE,
+        SIX,
+        SEVEN,
+        EIGHT,
+    };
+#endif
+
     template <typename T>
     struct Array {
         T* ptr;

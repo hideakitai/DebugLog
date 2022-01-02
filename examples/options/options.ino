@@ -21,6 +21,14 @@ void setup() {
         DebugLogBase::DEC, 85,
         DebugLogBase::HEX, 85);
 
+    // You can change the precision of floating point number (default: two)
+    PRINTLN("You can print floating points with precision",
+        DebugLogPrecision::ZERO, 1.23456789,
+        DebugLogPrecision::TWO, 1.23456789,
+        DebugLogPrecision::FOUR, 1.23456789,
+        DebugLogPrecision::SIX, 1.23456789,
+        DebugLogPrecision::EIGHT, 1.23456789);
+
     // You can change auto reset for base setting (default: true)
     // LOG_SET_BASE_RESET(false);
     PRINTLN("This would be hex", DebugLogBase::HEX, 255);
