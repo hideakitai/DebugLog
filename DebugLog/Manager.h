@@ -287,6 +287,8 @@ namespace debug {
         // print one helper
         template <typename S, typename T>
         void print_array(const T& head, S* s) {
+            bool b_base_reset_restore = b_base_reset;
+            b_base_reset = false;
             print_one("[", s);
             for (size_t i = 0; i < head.size(); ++i) {
                 print_one(head[i], s);
@@ -294,10 +296,13 @@ namespace debug {
                     print_one(", ", s);
             }
             print_one("]", s);
+            b_base_reset = b_base_reset_restore;
+            if (b_base_reset) log_base = LogBase::DEC;
         }
 
         template <typename S, typename T>
         void print_map(const T& head, S* s) {
+            bool b_base_reset_restore = b_base_reset;
             print_one("{", s);
             const size_t size = head.size();
             size_t i = 0;
@@ -309,6 +314,8 @@ namespace debug {
                     print_one(", ", s);
             }
             print_one("}", s);
+            b_base_reset = b_base_reset_restore;
+            if (b_base_reset) log_base = LogBase::DEC;
         }
 
 #else
