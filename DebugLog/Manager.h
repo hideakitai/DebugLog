@@ -404,7 +404,7 @@ namespace debug {
 #ifdef ARDUINO
             if (b_file) header += file + string_t(" ");
             if (b_line) header += string_t("L.") + line + string_t(" ");
-            if (b_func) header += func + string_t(" ");
+            if (b_func) header += string_t(func) + string_t(" ");
             header += string_t(": ");
 #else
             if (b_file) {
