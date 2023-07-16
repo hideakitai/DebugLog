@@ -118,7 +118,7 @@ namespace debug {
 #endif  // ARDUINO
 
         template <typename... Args>
-        void log(const LogLevel level, const char* file, const int line, const char* func, Args&&... args) {
+        void log(const LogLevel level, Args&&... args) {
             bool b_ignore = (log_lvl == LogLevel::LVL_NONE);
 #ifdef ARDUINO
             b_ignore &= (file_lvl == LogLevel::LVL_NONE);
@@ -126,7 +126,7 @@ namespace debug {
             b_ignore |= (level == LogLevel::LVL_NONE);
             if (b_ignore) return;
 
-            string_t header = generate_header(level, file, line, func);
+            string_t header = generate_header(level);
             if ((int)level <= (int)log_lvl) {
                 print(header);  // to avoid delimiter after header
                 println(std::forward<Args>(args)...);
@@ -391,7 +391,7 @@ namespace debug {
 
         // ===== other utilities =====
 
-        string_t generate_header(const LogLevel lvl, const char* file, const int line, const char* func) const {
+        string_t generate_header(const LogLevel lvl) const {
             string_t header;
             switch (lvl) {
                 case LogLevel::LVL_ERROR: header = "[ERROR] "; break;
@@ -401,27 +401,6 @@ namespace debug {
                 case LogLevel::LVL_TRACE: header = "[TRACE] "; break;
                 default: header = ""; break;
             }
-#ifdef ARDUINO
-            if (b_file) header += file + string_t(" ");
-            if (b_line) header += string_t("L.") + line + string_t(" ");
-            if (b_func) header += func + string_t(" ");
-            header += string_t(": ");
-#else
-            if (b_file) {
-                header += file;
-                header += " ";
-            };
-            if (b_line) {
-                header += "L.";
-                header += std::to_string(line);
-                header += " ";
-            }
-            if (b_func) {
-                header += func;
-                header += " ";
-            };
-            header += ": ";
-#endif
             return header;
         }
     };
