@@ -68,7 +68,7 @@ namespace debug {
             stream = &s;
         }
 
-#ifdef FILE_WRITE
+#if defined(FILE_WRITE) && defined(DEBUGLOG_ENABLE_FILE_LOGGER)
         // TODO: `File` class is always valid for various file systems??
         template <typename FsType, typename FileMode>
         void attach(FsType& s, const String& path, const FileMode& mode, const bool auto_save) {
