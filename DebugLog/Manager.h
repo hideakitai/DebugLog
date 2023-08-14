@@ -12,9 +12,6 @@ namespace debug {
         LogLevel log_lvl {DEBUGLOG_DEFAULT_LOG_LEVEL};
         LogBase log_base {LogBase::DEC};
         string_t delim {" "};
-        bool b_file {true};
-        bool b_line {true};
-        bool b_func {true};
         bool b_base_reset {true};
 
 #ifdef ARDUINO
@@ -42,12 +39,6 @@ namespace debug {
 
         void log_level(const LogLevel l) {
             log_lvl = l;
-        }
-
-        void option(const bool en_file, const bool en_line, const bool en_func) {
-            b_file = en_file;
-            b_line = en_line;
-            b_func = en_func;
         }
 
         void delimiter(const string_t& del) {
