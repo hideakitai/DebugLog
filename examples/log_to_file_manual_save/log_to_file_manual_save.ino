@@ -31,6 +31,8 @@
 // #include <FatFs.h>
 // TODO:
 
+// define DEBUGLOG_ENABLE_FILE_LOGGER to enable file logger
+#define DEBUGLOG_ENABLE_FILE_LOGGER
 #include <DebugLog.h>
 
 void shorten(String& s) {

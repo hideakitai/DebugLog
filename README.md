@@ -122,6 +122,16 @@ DebugLog can print variable args: 1 2.20 three => like this
 
 ## Logging to File
 
+### Enable File Logger
+
+This preparation is required to use the file logging
+
+```c++
+// define DEBUGLOG_ENABLE_FILE_LOGGER to enable file logger
+#define DEBUGLOG_ENABLE_FILE_LOGGER
+#include <DebugLog.h>
+```
+
 ### Attach to File System
 
 You can log to `File` automatically by calling this macro. `LOG_XXXX` and `ASSERT` are automatically wrote to file depending on the log level

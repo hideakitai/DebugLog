@@ -43,8 +43,10 @@ using DebugLogPrecision = arx::debug::LogPrecision;
 #define LOG_FILE_IS_OPEN() DebugLog::Manager::get().is_open()
 #define LOG_FILE_GET_LEVEL() DebugLog::Manager::get().file_level()
 #define LOG_FILE_SET_LEVEL(l) DebugLog::Manager::get().file_level(l)
+#if defined(FILE_WRITE) && defined(DEBUGLOG_ENABLE_FILE_LOGGER)
 #define LOG_ATTACH_FS_AUTO(fs, path, mode) DebugLog::Manager::get().attach(fs, path, mode, true)
 #define LOG_ATTACH_FS_MANUAL(fs, path, mode) DebugLog::Manager::get().attach(fs, path, mode, false)
+#endif
 #endif  // ARDUINO
 
 #include "DebugLogRestoreState.h"
