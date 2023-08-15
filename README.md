@@ -13,7 +13,6 @@ Logging library for Arduino that can output to both Serial and File with one lin
 - Multiple file system support (`SD`, `SdFat`, `SPIFFS`, etc.)
 - Support array and container (`std::vector`, `std::deque`, `std::map`) output
 - APIs can also be used in standard C++ apps
-- Custom preamble support `#define LOG_PREAMBLE` can easily call functions and other macros for every `LOG_XXXXX` call
 
 ## Basic Usage
 
@@ -33,7 +32,6 @@ Logging library for Arduino that can output to both Serial and File with one lin
 `LOG_XXXX` output is controlled by log level. Default log level is `DebugLogLevel::LVL_INFO`
 
 ```C++
-#define LOG_PREAMBLE __FILE__ " : "
 #include <DebugLog.h>
 
 // The default log_leval is DebugLogLevel::LVL_INFO
@@ -47,9 +45,9 @@ LOG_TRACE("this is trace: log level", 5);  // won't be printed
 `Serial` output example
 
 ```
-[ERROR] basic.ino : this is error: log level 1
-[WARN] basic.ino : this is warn: log level 2
-[INFO] basic.ino : this is info: log level 3
+[ERROR] basic.ino L.26 setup : this is error: log level 1
+[WARN] basic.ino L.27 setup : this is warn: log level 2
+[INFO] basic.ino L.28 setup : this is info: log level 3
 ```
 
 ### Log Level control
@@ -59,9 +57,6 @@ By defining `DEBUGLOG_DEFAULT_LOG_LEVEL_XXXX`, you can change default log level
 ```C++
 // You can also set default log level by defining macro (default: INFO)
 #define DEBUGLOG_DEFAULT_LOG_LEVEL_TRACE
-
-// You can call other macros, functions, or define strings that will be included in all log statements
-#define LOG_PREAMBLE __FILE__ " : "
 
 // Include DebugLog after that
 #include <DebugLog.h>
@@ -87,11 +82,11 @@ LOG_TRACE("this is trace log");
 will output
 
 ```
-[ERROR] basic.ino : this is error: log level 1
-[WARN] basic.ino : this is warn: log level 2
-[INFO] basic.ino : this is info: log level 3
-[DEBUG] basic.ino : this is debug: log level 4
-[TRACE] basic.ino : this is trace: log level 5
+[ERROR] basic.ino L.26 setup : this is error: log level 1
+[WARN] basic.ino L.27 setup : this is warn: log level 2
+[INFO] basic.ino L.28 setup : this is info: log level 3
+[DEBUG] basic.ino L.29 setup : this is debug: log level 4
+[TRACE] basic.ino L.30 setup : this is trace: log level 5
 ```
 
 ### Assertion
@@ -206,9 +201,6 @@ You can disable `LOG_XXXX` and `ASSERT` macro completely by defining following m
 // You can also set default log level by defining macro (default: INFO)
 // #define DEBUGLOG_DEFAULT_LOG_LEVEL_TRACE
 
-// You can call other macros, functions, or define strings that will be included in all log statements
-#define LOG_PREAMBLE __FILE__ " : "
-
 #include <DebugLog.h>
 
 void setup() {
@@ -261,12 +253,12 @@ void setup() {
 ```
 DebugLog can print variable args: 1 2.20 three => like this
 current log level is 3
-[ERROR] basic.ino : this is error log
-[WARN] basic.ino : this is warn log
-[INFO] basic.ino : this is info log
+[ERROR] basic.ino L.26 setup : this is error log
+[WARN] basic.ino L.27 setup : this is warn log
+[INFO] basic.ino L.28 setup : this is info log
 Array can be also printed like this [1.10, 2.20, 3.30]
 Containers can also be printed like [1, 2, 3] [1.10, 2.20, 3.30] {one:1, three:3, two:2}
-[ASSERT] basic.ino : x != 1 => This always fails
+[ASSERT] basic.ino 51 setup : x != 1 => This always fails
 ```
 
 ## Output Log to both Serial and File
@@ -287,9 +279,6 @@ Containers can also be printed like [1, 2, 3] [1.10, 2.20, 3.30] {one:1, three:3
 // If you want use SPIFFS (ESP32) or other FileSystems
 // #include <SPIFFS.h>
 // #define fs SPIFFS
-
-// You can call other macros, functions, or define strings that will be included in all log statements
-#define LOG_PREAMBLE __FILE__ " : "
 
 // after that, include DebugLog.h
 #include <DebugLog.h>
@@ -365,10 +354,10 @@ void setup() {
 `Serial` Output
 
 ```
-[ERROR] log_to_file.ino : this is error log
-[WARN] log_to_file.ino : this is warn log
-[INFO] log_to_file.ino : this is info log
-[ASSERT] log_to_file.ino : x != 1 => This always fails
+[ERROR] log_to_file.ino L.97 setup : this is error log
+[WARN] log_to_file.ino L.98 setup : this is warn log
+[INFO] log_to_file.ino L.99 setup : this is info log
+[ASSERT] log_to_file.ino 122 setup : x != 1 => This always fails
 ```
 
 `File` Output
@@ -376,10 +365,10 @@ void setup() {
 ```
 DebugLog can print variable args: 1 2.20 three => like this
 current log level is 1
-[ERROR] log_to_file.ino : this is error log
+[ERROR] log_to_file.ino L.97 setup : this is error log
 Array can be also printed like this [1.10, 2.20, 3.30]
 Containers can also be printed like [1, 2, 3] [1.10, 2.20, 3.30] {one:1, three:3, two:2}
-[ASSERT] log_to_file.ino : x != 1 => This always fails
+[ASSERT] log_to_file.ino 122 setup : x != 1 => This always fails
 ```
 
 ## Control Log Level Scope
