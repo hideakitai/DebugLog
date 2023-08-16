@@ -6,11 +6,16 @@
 #undef ASSERT
 #undef ASSERTM
 
+#define LOG_SHORT_FILENAME (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
+
+// C pre-proc Token Concatenation: https://wiki.sei.cmu.edu/confluence/display/c/PRE05-C.+Understand+macro+replacement+when+concatenating+tokens+or+performing+stringification
+#define xstr(s) str(s)
+#define str(s) #s
+
 #ifndef LOG_PREAMBLE
-  #define LOG_PREAMBLE LOG_SHORT_FILENAME, __LINE__, __func__
+  #define LOG_PREAMBLE LOG_SHORT_FILENAME, xstr(L.__LINE__), __func__, ":"
 #endif
 
-#define LOG_SHORT_FILENAME (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
 #define LOG_ERROR(...) DebugLog::Manager::get().log(arx::debug::LogLevel::LVL_ERROR, LOG_PREAMBLE, __VA_ARGS__)
 #define  LOG_WARN(...)  DebugLog::Manager::get().log(arx::debug::LogLevel::LVL_WARN, LOG_PREAMBLE, __VA_ARGS__)
 #define  LOG_INFO(...)  DebugLog::Manager::get().log(arx::debug::LogLevel::LVL_INFO, LOG_PREAMBLE, __VA_ARGS__)
