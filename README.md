@@ -13,6 +13,7 @@ Logging library for Arduino that can output to both Serial and File with one lin
 - Multiple file system support (`SD`, `SdFat`, `SPIFFS`, etc.)
 - Support array and container (`std::vector`, `std::deque`, `std::map`) output
 - APIs can also be used in standard C++ apps
+- Log preamble control `#define LOG_PREAMBLE` exposes customization of string that comes before each log message
 
 ## Basic Usage
 
@@ -87,6 +88,34 @@ will output
 [INFO] basic.ino L.28 setup : this is info: log level 3
 [DEBUG] basic.ino L.29 setup : this is debug: log level 4
 [TRACE] basic.ino L.30 setup : this is trace: log level 5
+```
+
+### Log Preamble Control
+The `LOG_PREAMBLE` macro is called every `LOG_XXXX`. It defines a string that will be printed between the `[LEVEL]` and your custom message. To override the default definition, you must define the macro **before** you `#include <DebugLog.h>`
+
+#### Simple LOG_PREAMBLE:
+```C++
+#define LOG_PREAMBLE "||We the People||"
+#include <DebugLog.h>
+
+LOG_ERROR("Message 1");
+LOG_WARN("Message 2");
+LOG_INFO("Message 3");
+```
+
+`Serial` output
+
+```
+[ERROR] ||We the People|| Message 1
+[WARN] ||We the People|| Message 2
+[INFO] ||We the People|| Message 3
+```
+
+#### Default LOG_PREAMBLE:
+The Default `LOG_PREAMBLE` calls other macros and functions. _Note_ the comma separated fields will be space delimeted as they are inputs to the `LOG_XXXX(...)` macro.
+
+```C++
+#define LOG_PREAMBLE LOG_SHORT_FILENAME, xstr(L.__LINE__), __func__, ":"
 ```
 
 ### Assertion
