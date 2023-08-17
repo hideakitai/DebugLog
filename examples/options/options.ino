@@ -38,11 +38,6 @@ void setup() {
     LOG_SET_DELIMITER(" and ");
     PRINTLN("Changed delimtier from \" \" to \" and \"");
     LOG_INFO(1, 2, 3, 4, 5);
-
-    // You can change some log format options
-    LOG_SET_OPTION(false, false, false);  // disable file, line, func
-    PRINTLN("Disabled file, line, and func from log output format");
-    LOG_INFO("You can't see file, line, and func here");
 }
 
 void loop() {

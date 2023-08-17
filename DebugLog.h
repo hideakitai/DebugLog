@@ -28,7 +28,6 @@ using DebugLogPrecision = arx::debug::LogPrecision;
 #define LOG_AS_ARR(arr, sz) DebugLog::to_arr(arr, sz)
 #define LOG_GET_LEVEL() DebugLog::Manager::get().log_level()
 #define LOG_SET_LEVEL(l) DebugLog::Manager::get().log_level(l)
-#define LOG_SET_OPTION(file, line, func) DebugLog::Manager::get().option(file, line, func)
 #define LOG_SET_DELIMITER(d) DebugLog::Manager::get().delimiter(d)
 #define LOG_SET_BASE_RESET(b) DebugLog::Manager::get().base_reset(b)
 
