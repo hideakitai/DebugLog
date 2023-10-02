@@ -115,8 +115,10 @@ LOG_INFO("Message 3");
 The Default `LOG_PREAMBLE` calls other macros and functions. _Note_ the comma separated fields will be space delimeted as they are inputs to the `LOG_XXXX(...)` macro.
 
 ```C++
-#define LOG_PREAMBLE LOG_SHORT_FILENAME, xstr(L.__LINE__), __func__, ":"
+#define LOG_PREAMBLE LOG_SHORT_FILENAME, LOG_MACRO_APPEND_STR(L.__LINE__), __func__, ":"
 ```
+
+> The `LOG_MACRO_APPEND_STR()` macro will append a string to the result of a second macro
 
 ### Assertion
 
