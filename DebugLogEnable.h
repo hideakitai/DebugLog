@@ -9,11 +9,11 @@
 #define LOG_SHORT_FILENAME (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
 
 // C pre-proc Token Concatenation: https://wiki.sei.cmu.edu/confluence/display/c/PRE05-C.+Understand+macro+replacement+when+concatenating+tokens+or+performing+stringification
-#define xstr(s) str(s)
-#define str(s) #s
+#define LOG_MACRO_APPEND_STR(s) LOG_HELPER_MACRO_APPEND_STR(s)
+#define LOG_HELPER_MACRO_APPEND_STR(s) #s
 
 #ifndef LOG_PREAMBLE
-  #define LOG_PREAMBLE LOG_SHORT_FILENAME, xstr(L.__LINE__), __func__, ":"
+  #define LOG_PREAMBLE LOG_SHORT_FILENAME, LOG_MACRO_APPEND_STR(L.__LINE__), __func__, ":"
 #endif
 
 #if defined(DEBUGLOG_DEFAULT_LOG_LEVEL_ERROR)
