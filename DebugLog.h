@@ -11,8 +11,8 @@
 #include <string.h>
 #endif
 
-#include "DebugLog/util/ArxTypeTraits/ArxTypeTraits.h"
-#include "DebugLog/util/ArxContainer/ArxContainer.h"
+#include <ArxTypeTraits.h>
+#include <ArxContainer.h>
 #include "DebugLog/Types.h"
 #include "DebugLog/Manager.h"
 

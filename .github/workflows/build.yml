@@ -101,4 +101,6 @@ jobs:
             - examples/options
           libraries: |
             - source-path: ./
+            - name: ArxContainer
+            - name: ArxTypeTraits
           verbose: true
