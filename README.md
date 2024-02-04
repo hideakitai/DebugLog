@@ -2,6 +2,13 @@
 
 Logging library for Arduino that can output to both Serial and File with one line
 
+> [!WARNING]
+> Dependent libraries removed (>= v0.8.0). If you have already installed this library, please follow:
+>
+> - Cloned from GitHub (manually): Please install dependent libraries manually
+> - Installed from library manager: re-install this library from library manager
+>   - Dependent libraries will be installed automatically
+
 ## Feature
 
 - Output logs to `Serial` and `File` with one line at the same time
@@ -91,9 +98,11 @@ will output
 ```
 
 ### Log Preamble Control
+
 The `LOG_PREAMBLE` macro is called every `LOG_XXXX`. It defines a string that will be printed between the `[LEVEL]` and your custom message. To override the default definition, you must define the macro **before** you `#include <DebugLog.h>`
 
 #### Simple LOG_PREAMBLE:
+
 ```C++
 #define LOG_PREAMBLE "||We the People||"
 #include <DebugLog.h>
@@ -112,6 +121,7 @@ LOG_INFO("Message 3");
 ```
 
 #### Default LOG_PREAMBLE:
+
 The Default `LOG_PREAMBLE` calls other macros and functions. _Note_ the comma separated fields will be space delimeted as they are inputs to the `LOG_XXXX(...)` macro.
 
 ```C++
@@ -545,6 +555,11 @@ enum class LogPrecision {
     EIGHT,
 };
 ```
+
+## Dependent Libraries
+
+- [ArxTypeTraits](https://github.com/hideakitai/ArxTypeTraits)
+- [ArxContainer](https://github.com/hideakitai/ArxContainer)
 
 ## Used Inside of
 
