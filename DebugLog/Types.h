@@ -33,11 +33,11 @@ namespace debug {
     using map_t = std::map<K, V>;
 #else   // Do not have libstdc++11
     template <typename T, size_t N>
-    using vec_t = arx::vector<T, N>;
+    using vec_t = arx::stdx::vector<T, N>;
     template <typename T, size_t N>
-    using deq_t = arx::deque<T, N>;
+    using deq_t = arx::stdx::deque<T, N>;
     template <typename K, typename V, size_t N>
-    using map_t = arx::map<K, V, N>;
+    using map_t = arx::stdx::map<K, V, N>;
 #endif  // Do not have libstdc++11
 
 // serial loggers
