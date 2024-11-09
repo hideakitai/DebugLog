@@ -11,7 +11,7 @@ Logging library for Arduino that can output to both Serial and File with one lin
 
 ## Feature
 
-- Output logs to `Serial` and `File` with one line at the same time
+- Output logs to `Serial` (or any other `Stream`) and `File` with one line at the same time
 - Output logs with variadic arguments
 - Assertion support (suspend program with messages if assertion fails)
 - Release Mode `#define DEBUGLOG_DISABLE_LOG` can easily disable logging (`LOG_XXXX`, `ASSERT`)
@@ -95,6 +95,24 @@ will output
 [INFO] basic.ino L.28 setup : this is info: log level 3
 [DEBUG] basic.ino L.29 setup : this is debug: log level 4
 [TRACE] basic.ino L.30 setup : this is trace: log level 5
+```
+
+### Log Destination Control
+
+You can output the log to another `Serial` easily:
+
+```cpp
+LOG_ATTACH_SERIAL(Serial2);
+```
+
+Also this library supports the log output to any `Stream` based instances. For example, you can change the log output destination to `Ethernet/WiFiClient`, `Ethernet/WiFiUDP` instead of default `Serial` as follows:
+
+```cpp
+LOG_ATTACH_STREAM(your_udp_client);
+// or
+LOG_ATTACH_STREAM(your_tcp_client);
+// or
+LOG_ATTACH_STREAM(any_other_stream);
 ```
 
 ### Log Preamble Control
@@ -509,6 +527,7 @@ If you use `LOG_ATTACH_FS_MANUAL`, these macros are used to flush files manually
 #define LOG_SET_BASE_RESET(b)
 // Arduino Only
 #define LOG_ATTACH_SERIAL(serial)
+#define LOG_ATTACH_STREAM(stream)
 #define LOG_FILE_IS_OPEN()
 #define LOG_FILE_GET_LEVEL()
 #define LOG_FILE_SET_LEVEL(lvl)
