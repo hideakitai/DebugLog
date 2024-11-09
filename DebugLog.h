@@ -35,6 +35,7 @@ using DebugLogPrecision = arx::debug::LogPrecision;
 
 #ifdef ARDUINO
 #define LOG_ATTACH_SERIAL(s) DebugLog::Manager::get().attach(s)
+#define LOG_ATTACH_STREAM(s) DebugLog::Manager::get().attach(s)
 // PRINT_FILE and PRINTLN_FILE are always enabled regardless of file_level
 // PRINT_FILE and PRINTLN_FILE do NOT print to Serial
 #define PRINT_FILE(...) DebugLog::Manager::get().print_file(__VA_ARGS__)

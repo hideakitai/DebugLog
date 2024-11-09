@@ -13,6 +13,9 @@ void setup() {
 
     // You can change target stream (default: Serial)
     // LOG_ATTACH_SERIAL(Serial2);
+    // LOG_ATTACH_STREAM(udp_client);
+    // LOG_ATTACH_STREAM(tcp_client);
+    // LOG_ATTACH_STREAM(any_other_stream);
 
     // You can change auto reset for base setting (default: true)
     PRINTLN("You can print variable args with bases",
